@@ -4,7 +4,9 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import './pages/Auth/login.jsx' 
 import Login from './pages/Auth/login.jsx';
+import ForgotPassword from './pages/Auth/forgotPassword.jsx';
 import Register from './pages/Auth/register.jsx';
+
 
 
 function App() {
@@ -12,8 +14,11 @@ function App() {
 
   return (
   
-    // <Login/>
+
+  //<ForgotPassword/>
+  // <Login/>
     <Register/>
+
   )
 }
 
