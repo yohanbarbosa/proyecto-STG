@@ -17,8 +17,8 @@ export default function Login() {
 
 
           {/* Texto de bienvenida */}
-          <h2 className="text-3xl font-bold mb-2">Bienvenido</h2>
-          <p className="text-gray-500 mb-6">Bienvenido, ingrese sus datos</p>
+          <h2 className="text-3xl font-bold mb-2">Restablecer Contraseña</h2>
+          <p className="text-gray-500 mb-6">Ingrese su correo asociado a la cuenta para recuperar su contraseña</p>
           
           
           {/* Inicio de sesion */}
@@ -28,38 +28,25 @@ export default function Login() {
               <input
                 type="email"
                 className="bg-transparent outline-none flex-1"
-                placeholder="Usuario o correo electrónico"
+                placeholder="Correo electrónico"
                
               />
             </div>
           </div>
-          <div className="mb-4">
-            <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
-              <Icon icon="mdi:password" width="24" height="24" />
-              <input
-                type="password"
-                className="bg-transparent outline-none flex-1"
-                placeholder="Ingrese su contraseña"
-              />
-            </div>
-          </div>
+          
           
       
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-200"></div>
           </div>
           {/* Boton continuar */}
-          <button className="w-full bg-[#0366ff] text-white py-3 mt-2.5 rounded-lg font-semibold mb-4 hover:bg-blue-700 transition cursor-pointer">Continue</button>
+          <button className="w-full bg-[#0366ff] text-white py-3 mt-2.5 rounded-lg font-semibold mb-4 hover:bg-blue-700 transition cursor-pointer">Enviar</button>
          
           {/* Footer */}
           <p className="text-xs text-gray-400">
-            No tienes una cuenta? <a href="#" className="text-blue-500 hover:underline">Regístrate</a>
+            Volver al  <a href="#" className="text-blue-500 hover:underline">Login</a>
           </p>
-          
-          <p className="text-xs text-gray-400 pt-2">
-            Olvidaste tu contraseña? <a href="#" className="text-blue-500 hover:underline">Recupérala</a>
-          </p>
-          
+                    
         </div>
         {/* Imagen */}
         <div

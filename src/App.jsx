@@ -4,13 +4,14 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import './pages/Auth/login' 
 import Login from './pages/Auth/login.jsx';
+import ForgotPassword from './pages/Auth/forgotPassword.jsx';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
   
-     <Login/>
+     <ForgotPassword/>
     
   )
 }
