@@ -52,7 +52,7 @@ function HomeHooks() {
     </tr>
     <tr class="even:bg-gray-100">
       <td class="py-2 px-4 border border-gray-300">
-        <a href="https://reactjs.org/docs/hooks-reference.html#useref" target="_blank" class="text-cyan-700 hover:underline">useRef</a>
+        <Link to="/useRef" >ir a UseRef</Link>
       </td>
       <td class="py-2 px-4 border border-gray-300">useRef</td>
       <td class="py-2 px-4 border border-gray-300"></td>
