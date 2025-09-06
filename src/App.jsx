@@ -10,6 +10,7 @@ import HookUseState from './playground/HoookUseState.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomeHooks from './playground/HomeHooks.jsx';
 import HookUseNavigate from './playground/HookUseNavigate.jsx';
+import HookUseEffect from './playground/HookUseEffect.jsx';
 
 
 
@@ -24,6 +25,7 @@ function App() {
         {/* rutas para componentes de hooks */}
         <Route path='/useState' element={<HookUseState />}></Route>
         <Route path='/useNavigate' element={<HookUseNavigate />}></Route>
+        <Route path='/useEffect' element={<HookUseEffect />}></Route>
       </Routes>
     </BrowserRouter>
   )

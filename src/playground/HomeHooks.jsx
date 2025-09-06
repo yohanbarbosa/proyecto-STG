@@ -9,60 +9,137 @@ function HomeHooks() {
                
 
                 <table class="min-w-full border border-gray-300 rounded-md overflow-hidden">
-                    <thead class="bg-cyan-900 text-white">
-                        <tr>
-                            <th class="py-2 px-4 border border-gray-300">Enlace</th>
-                            <th class="py-2 px-4 border border-gray-300">Descripcion</th>
-                            <th class="py-2 px-4 border border-gray-300">Encabezado 3</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"><Link to="/useState" className="border-cyan-900 border p-2 inline-block mr-2">
-                                ir a useState
-                            </Link></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 2</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 3</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"><Link to="/useNavigate" className="border-cyan-900 border p-2 inline-block">
-                                ir a useNavigate
-                            </Link></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                        <tr class="">
-                            <td class="py-2 px-4 border border-gray-300"></td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 5</td>
-                            <td class="py-2 px-4 border border-gray-300">Dato 6</td>
-                        </tr>
-                    </tbody>
-                </table>
+  <thead class="bg-cyan-900 text-white">
+    <tr>
+      <th class="py-2 px-4 border border-gray-300">Enlace</th>
+      <th class="py-2 px-4 border border-gray-300">Hook</th>
+      <th class="py-2 px-4 border border-gray-300">Descripción</th>
+      <th class="py-2 px-4 border border-gray-300">Categoría</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <Link to="/useState" >ir a UseState</Link>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useState</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Estado</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+       <Link to="/useEffect" >ir a UseEffect</Link>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useEffect</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Efectos</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usecontext" target="_blank" class="text-cyan-700 hover:underline">useContext</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useContext</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Contexto</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usereducer" target="_blank" class="text-cyan-700 hover:underline">useReducer</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useReducer</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Estado</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#useref" target="_blank" class="text-cyan-700 hover:underline">useRef</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useRef</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Referencias</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usecallback" target="_blank" class="text-cyan-700 hover:underline">useCallback</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useCallback</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Optimización</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usememo" target="_blank" class="text-cyan-700 hover:underline">useMemo</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useMemo</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Optimización</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#useimperativehandle" target="_blank" class="text-cyan-700 hover:underline">useImperativeHandle</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useImperativeHandle</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Referencias</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#uselayouteffect" target="_blank" class="text-cyan-700 hover:underline">useLayoutEffect</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useLayoutEffect</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Efectos</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usedebugvalue" target="_blank" class="text-cyan-700 hover:underline">useDebugValue</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useDebugValue</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Debug</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usetransition" target="_blank" class="text-cyan-700 hover:underline">useTransition</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useTransition</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Concurrent / UI</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usedeferredvalue" target="_blank" class="text-cyan-700 hover:underline">useDeferredValue</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useDeferredValue</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Concurrent / UI</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#useid" target="_blank" class="text-cyan-700 hover:underline">useId</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useId</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">IDs únicos</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#usesyncexternalstore" target="_blank" class="text-cyan-700 hover:underline">useSyncExternalStore</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useSyncExternalStore</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Suscripción externa</td>
+    </tr>
+    <tr class="even:bg-gray-100">
+      <td class="py-2 px-4 border border-gray-300">
+        <a href="https://reactjs.org/docs/hooks-reference.html#useinsertioneffect" target="_blank" class="text-cyan-700 hover:underline">useInsertionEffect</a>
+      </td>
+      <td class="py-2 px-4 border border-gray-300">useInsertionEffect</td>
+      <td class="py-2 px-4 border border-gray-300"></td>
+      <td class="py-2 px-4 border border-gray-300">Efectos</td>
+    </tr>
+  </tbody>
+</table>
 
 
             </div>
