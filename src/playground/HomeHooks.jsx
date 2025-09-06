@@ -68,7 +68,7 @@ function HomeHooks() {
     </tr>
     <tr class="even:bg-gray-100">
       <td class="py-2 px-4 border border-gray-300">
-        <a href="https://reactjs.org/docs/hooks-reference.html#usememo" target="_blank" class="text-cyan-700 hover:underline">useMemo</a>
+        <Link to="/useMemo" >ir a Memo</Link>
       </td>
       <td class="py-2 px-4 border border-gray-300">useMemo</td>
       <td class="py-2 px-4 border border-gray-300"></td>
