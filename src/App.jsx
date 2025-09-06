@@ -11,11 +11,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomeHooks from './playground/HomeHooks.jsx';
 import HookUseNavigate from './playground/HookUseNavigate.jsx';
 import HookUseEffect from './playground/HookUseEffect.jsx';
+import HookUseContext from './playground/HookUseContext.jsx';
 
 
 
 
-function App() {
+function App() {  
   const [count, setCount] = useState(0)
 
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/useState' element={<HookUseState />}></Route>
         <Route path='/useNavigate' element={<HookUseNavigate />}></Route>
         <Route path='/useEffect' element={<HookUseEffect />}></Route>
+        <Route path='/useContext' element={<HookUseContext />}></Route>
       </Routes>
     </BrowserRouter>
   )

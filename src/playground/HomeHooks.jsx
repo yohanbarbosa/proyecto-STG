@@ -36,7 +36,7 @@ function HomeHooks() {
     </tr>
     <tr class="even:bg-gray-100">
       <td class="py-2 px-4 border border-gray-300">
-        <a href="https://reactjs.org/docs/hooks-reference.html#usecontext" target="_blank" class="text-cyan-700 hover:underline">useContext</a>
+       <Link to="/useContext" >ir a UseContext</Link>
       </td>
       <td class="py-2 px-4 border border-gray-300">useContext</td>
       <td class="py-2 px-4 border border-gray-300"></td>
