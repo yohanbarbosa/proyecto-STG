@@ -9,6 +9,7 @@ function HomeHooks() {
                
 
                 <table class="min-w-full border border-gray-300 rounded-md overflow-hidden">
+
   <thead class="bg-cyan-900 text-white">
     <tr>
       <th class="py-2 px-4 border border-gray-300">Enlace</th>
@@ -140,7 +141,6 @@ function HomeHooks() {
     </tr>
   </tbody>
 </table>
-
 
             </div>
         </div>
