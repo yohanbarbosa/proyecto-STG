@@ -30,6 +30,7 @@ function HookuseLayoutEffect() {
         </Link>
       </div>
       <div className="w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Ejemplo con sistema de chat</h1>
         <div
           ref={chatRef}
           className="border h-40 overflow-y-auto p-2 bg-gray-100 rounded"
