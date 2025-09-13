@@ -29,6 +29,7 @@ export default function App() {
         </Link>
       </div>
       <div className="w-lg m-auto">
+        <h1 className="text-2xl font-bold mb-4">Ejemlo de HookUseInsertiomEffect</h1>
         <button
           onClick={() =>
             setColor(color === "lightblue" ? "lightgreen" : "lightblue")

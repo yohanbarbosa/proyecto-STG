@@ -23,7 +23,10 @@ import HookUseMemo from './playground/HookUseMemo.jsx';
 import HookUseOptimistic from './playground/HookUseOptimistic.jsx';
 import HookUseReducer from './playground/HookUseReducer.jsx';
 import HookUseRef from './playground/HookUseRef.jsx';
-
+import HookUseLayoutEffect from './playground/HookUseLayoutEffect.jsx';
+import HookUseSyncExternalStore from './playground/HookUseSyncExternalStore.jsx';
+import HookUseFormStatus from './playground/HookUseFormStatus.jsx';
+import HookUseTransition from './playground/HookUseTransition.jsx';
 
 
 
@@ -46,10 +49,13 @@ function App() {
         <Route path='/useMemo' element={<HookUseMemo />}></Route>
         <Route path='/useOptimistic' element={<HookUseOptimistic />}></Route>
         <Route path='/useReducer' element={<HookUseReducer />}></Route>
-
         <Route path='/useRef' element={<HookUseRef />}></Route>
         <Route path='/useState' element={<HookUseState />}></Route>
         <Route path='/useNavigate' element={<HookUseNavigate />}></Route>
+        <Route path="/useLayoutEffect" element={<HookUseLayoutEffect />} />
+        <Route path="/useSyncExternalStore" element={<HookUseSyncExternalStore />} />
+        <Route path="/useFormStatus" element={<HookUseFormStatus />} />
+        <Route path="/useTransition" element={<HookUseTransition />} />
       </Routes>
     </BrowserRouter>
   )

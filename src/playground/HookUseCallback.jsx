@@ -24,7 +24,18 @@ function HookUseCallback() {
 
     return (
         <div className="flex items-center w-full h-screen">
+
+            <div className="absolute top-5 left-5 ">
+                <Link
+                    className=" hover:bg-blue-500  bg-blue-600 px-2 py-2 rounded-[10px]"
+                    to="/"
+                >
+                    Volver al HomeHooks
+                </Link>
+            </div>
             <div className="mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Ejemlo de HookUseCallback</h1>
+
                 <div className="">
                     <p>Count: {count}</p>
                     <button className="px-4 rounded-lg bg-green-600 hover:bg-green-500" onClick={increment}>Sumar</button>
@@ -37,12 +48,6 @@ function HookUseCallback() {
                         onChange={(e) => setText(e.target.value)}
                         placeholder="Escribe algo"
                     />
-                </div>
-
-                <div className="mt-10">
-                    <button className=" hover:bg-blue-500  bg-blue-600 px-2 rounded-[10px]">
-                        <Link to="/">Volver al Home Hook</Link>
-                    </button>
                 </div>
             </div>
         </div>

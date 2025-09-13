@@ -28,7 +28,7 @@ export default function CounterApp() {
         </Link>
       </div>
       <div className="w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Contador con useReducer</h1>
+        <h1 className="text-2xl font-bold mb-4">Ejemplo de HookUseReducer</h1>
         <p className="text-lg mb-4">Valor: {state.count}</p>
 
         <div className="flex justify-center space-x-4">

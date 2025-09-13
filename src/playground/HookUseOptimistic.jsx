@@ -1,6 +1,7 @@
 import { useOptimistic, useState } from "react";
 import { Link } from "react-router-dom";
-export default function App() {
+
+ function HookUseOptimistic() {
   const [comments, setComments] = useState([
     { id: 1, text: "¡Hola!" },
     { id: 2, text: "Me gusta React 19 🚀" },
@@ -35,6 +36,8 @@ export default function App() {
         </Link>
       </div>
       <div className="mx-auto">
+        <h1 className="text-xl font-bold mb-2">Ejemplo de HookUseOptimistic</h1>
+
         <h2 className="text-xl font-bold mb-2">Comentarios</h2>
 
         <div className="flex gap-4">
@@ -65,3 +68,4 @@ export default function App() {
     </div>
   );
 }
+export default HookUseOptimistic;
