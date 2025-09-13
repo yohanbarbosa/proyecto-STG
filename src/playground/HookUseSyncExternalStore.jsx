@@ -35,7 +35,7 @@ function getSnapshot() {
         </Link>
       </div>
       <div className="mx-auto w-60">
-      <h1 className="text-2xl font-bold mb-4">Contador con UseSyncExternalStore</h1>
+      <h1 className="text-2xl font-bold mb-4">Ejemplo de HookUseSyncExternalStore</h1>
         <h2 className="text-xl">Contador: {count}</h2>
         <button
           onClick={increment}

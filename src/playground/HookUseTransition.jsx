@@ -33,7 +33,7 @@ function HookUseTransition() {
         </Link>
       </div>
       <div className="mx-auto w-lg">
-        <h1 className="text-xl font-bold mb-4">Ejemplo con useTransition</h1>
+        <h1 className="text-xl font-bold mb-4">Ejemplo de HookuseTransition</h1>
 
         <input
           type="text"
