@@ -1,12 +1,89 @@
 import './login-global.css';
 import { Icon } from '@iconify/react';
+import { Await, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { async } from '@firebase/util';
+
+import { auth, db } from '../../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'; 
+import Swal from 'sweetalert2';
+import { FaEye, FaEyeSlash} from "react-icons/fa"
+
+
 
 
 export default function Register() {
+  const navigate = useNavigate();
+
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const [formData, setFormData] = useState({
+    nombres: "", apellidos: "", correo: "", cedula: "", fechaNacimiento: "",
+    telefono: "", sexo: "", contraseña: "", confirmarContraseña:""
+  });
+
+  const handleChange = (e)  => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const {
+      nombres, apellidos, correo, cedula, fechaNacimiento,
+    telefono, sexo, contraseña, confirmarContraseña    } = formData;
+
+    //Validaciones
+    if(
+      !nombres|| !apellidos|| !correo|| !cedula|| !fechaNacimiento||
+      !telefono|| !sexo|| !contraseña|| !confirmarContraseña
+    ){
+      return Swal.fire("Todos los campos son obligatorios");
+    }
+    if(contraseña.length<6){
+      return Swal.fire("La contraseña debe tener almenos 6 caracteres");
+    }
+    if(contraseña !== confirmarContraseña){
+      return Swal.fire("Las contraseñas no son iguales");
+    }
+
+    try {
+      const emaillower = correo.toLocaleLowerCase();
+
+      //Crea usuario para el sevicio de autenticacion de firebase
+      const userMethod = await createUserWithEmailAndPassword(auth, emaillower, contraseña);
+      const user = userMethod.user;
+
+      //Guardar datos en firebase
+      await setDoc (doc(db, "usuarios", user.uid)), {
+        uid: user.uid,
+        nombres, apellidos, correo: emaillower, cedula, fechaNacimiento, telefono,
+        sexo, estado: "pendiente", rol:"visitante", creado: new Date(), metodo: "contraseña"
+      }
+
+      Swal.fire("Registrado", "Usuario creado con exito", "Success");
+      navigate("/")
+
+    } catch (error) {
+      console.error("Error de registro: ", error);
+
+      if (error.code === "auth/email-already-in-use") {
+        Swal.fire("Correo en uso","Debe ingresar otro correo","Error");
+      }
+      
+    }
+
+  }
+
+
   return (
-    <div className="h-full flex items-center justify-center  bg-[#dee1e8] ">
-      <div className="flex w-[900px] h-[700px] bg-white rounded-2xl shadow-lg overflow-hidden text-black">
-        <div className="w-1/2 flex flex-col justify-center px-12">
+    <div className="h-full flex items-center justify-center   ">
+      <div className="flex w-[900px] h-[700px] bg-white rounded-2xl shadow-2xl overflow-hidden text-black">
+        <form onSubmit={handleSubmit} className="w-1/2 flex flex-col justify-center px-12">
           {/* Logo */}
           <div className="mb-8 mt-1.5 flex flex-col items-center">
             <Icon icon="mdi:adjust" width="64" height="64" color="" />
@@ -26,9 +103,12 @@ export default function Register() {
             <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
               <Icon icon="mdi:account" width="24" height="24" />
               <input
+              name='nombres'
                 type="text"
                 className="bg-transparent outline-none flex-1"
                 placeholder="Nombres"
+                value={formData.nombres}
+                onChange={handleChange}
                
               />
             </div>
@@ -37,10 +117,12 @@ export default function Register() {
             <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
               <Icon icon="mdi:account" width="24" height="24" />
               <input
+              name='apellidos'
                 type="text"
                 className="bg-transparent outline-none flex-1"
                 placeholder="Apellidos"
-               
+                value={formData.apellidos}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -48,9 +130,12 @@ export default function Register() {
             <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
               <Icon icon="mdi:email" width="24" height="24" />
               <input
+              name='correo'
                 type="email"
                 className="bg-transparent outline-none flex-1"
                 placeholder="Correo electrónico"
+                value={formData.correo}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -58,20 +143,34 @@ export default function Register() {
             <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
               <Icon icon="mdi:password" width="24" height="24" />
               <input
-                type="password"
+                name='contraseña'
+                type={showPassword ? "text" : "password"}
                 className="bg-transparent outline-none flex-1"
                 placeholder="Contraseña"
+                value={formData.contraseña}
+                onChange={handleChange}
               />
+              <button
+              type= "button"
+              className="btn btn-outline-secondary"
+              onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash/>: <FaEye/>}
+              </button>
             </div>
           </div>
           <div className="mb-4">
             <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
               <Icon icon="mdi:password-check" width="24" height="24" />
               <input
+              name='confirmarContraseña'
                 type="password"
                 className="bg-transparent outline-none flex-1"
                 placeholder="Confirmar contraseña"
+                value={formData.confirmarContraseña}
+                onChange={handleChange}
               />
+              
             </div>
           </div>
           
@@ -84,10 +183,11 @@ export default function Register() {
          
           {/* Footer */}
           <p className="text-xs text-gray-400 ">
-            ¿Ya tienes una cuenta? <a href="#" className="text-blue-500 hover:underline">Inicia sesión</a>
+            ¿Ya tienes una cuenta? <div className="">
+              </div><a href="" className="text-blue-500 hover:underline">Inicia sesión</a>
           </p>
           
-        </div>
+        </form>
         {/* Imagen */}
         <div
           className="w-1/2 bg-blue-100 flex items-center justify-center"

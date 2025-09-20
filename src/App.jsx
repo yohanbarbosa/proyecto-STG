@@ -35,7 +35,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<HomeHooks />}></Route>
+        <Route path='/' element={<Register />}></Route>
+        <Route path='/login' element={<Login />}></Route>
+        
+
         {/* rutas para componentes de hooks */}
         <Route path='/useActionState' element={<HookUseActionState />}></Route>
         <Route path='/useCallbak' element={<HookUseCallback />}></Route>
@@ -56,6 +59,7 @@ function App() {
         <Route path="/useSyncExternalStore" element={<HookUseSyncExternalStore />} />
         <Route path="/useFormStatus" element={<HookUseFormStatus />} />
         <Route path="/useTransition" element={<HookUseTransition />} />
+        
       </Routes>
     </BrowserRouter>
   )
