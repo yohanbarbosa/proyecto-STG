@@ -71,12 +71,46 @@ function TipoTramites() {
       setLoading(false);
     }
   };
+
+  // ACTUALIZAR TIPO DE TRÁMITE (UPDATE)
+  const actualizarTipoTramite = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const ahora = new Date();
+      const fechaFormateada = `${ahora.getDate()}/${ahora.getMonth() + 1}/${ahora.getFullYear()}`;
+      
+      const tipoTramiteRef = doc(db, "tipo-tramites", selectedTipoTramite.id);
+      const dataToUpdate = {
+        ...formData,
+        ultimaActualizacion: fechaFormateada,
+      };
+      await updateDoc(tipoTramiteRef, dataToUpdate);
+      cerrarModal();
+      resetForm();
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al actualizar tipo de trámite:", error);
+      setLoading(false);
+    }
+  };
+
   const abrirModalCrear = () => {
     setModalMode("crear");
     resetForm();
     setShowModal(true);
   };
 
+  const abrirModalEditar = (tipoTramite) => {
+    setModalMode("editar");
+    setSelectedTipoTramite(tipoTramite);
+    setFormData({
+      nombre: tipoTramite.nombre,
+      estado: tipoTramite.estado,
+    });
+    setShowModal(true);
+  };
 
   const abrirModalEliminar = (tipoTramite) => {
     setSelectedTipoTramite(tipoTramite);
@@ -119,7 +153,7 @@ function TipoTramites() {
           </button>
         </div>
 
-       
+
           <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
