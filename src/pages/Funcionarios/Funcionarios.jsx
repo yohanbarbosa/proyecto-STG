@@ -95,7 +95,20 @@ function Funcionarios() {
     }
   };
 
+  // ELIMINAR FUNCIONARIO (DELETE)
+  const eliminarFuncionario = async () => {
+    setLoading(true);
 
+    try {
+      await deleteDoc(doc(db, "funcionarios", selectedFuncionario.id));
+      setShowDeleteModal(false);
+      setSelectedFuncionario(null);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al eliminar funcionario:", error);
+      setLoading(false);
+    }
+  };
 
   const abrirModalCrear = () => {
     setModalMode("crear");
@@ -138,7 +151,19 @@ function Funcionarios() {
     });
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "Sin fecha";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString("es-ES");
+  };
 
   return (
     <AppLayout>
@@ -448,6 +473,59 @@ function Funcionarios() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL ELIMINAR */}
+        {showDeleteModal && selectedFuncionario && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+                <Icon
+                  icon="mdi:alert-circle-outline"
+                  className="w-6 h-6 text-red-600"
+                />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 text-center mb-2">
+                ¿Eliminar funcionario?
+              </h3>
+              <p className="text-gray-600 text-center mb-6">
+                ¿Está seguro de que desea eliminar a{" "}
+                <strong>
+                  {selectedFuncionario.nombreCompleto}{" "}
+                  {selectedFuncionario.apellidoCompleto}
+                </strong>
+                ? Esta acción no se puede deshacer.
+              </p>
+              <div className="flex items-center justify-center space-x-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={eliminarFuncionario}
+                  disabled={loading}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
+                >
+                  {loading ? (
+                    <>
+                      <Icon
+                        icon="mdi:loading"
+                        className="w-5 h-5 animate-spin"
+                      />
+                      <span>Eliminando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon icon="mdi:delete-outline" className="w-5 h-5" />
+                      <span>Eliminar</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
