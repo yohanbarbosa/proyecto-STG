@@ -16,10 +16,7 @@ import {
   Cell,
 } from "recharts";
 
-const GovernmentDashboard = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedStatus, setSelectedStatus] = useState("todos");
-
+function Dashboard() {
   // Datos de ejemplo
   const stats = {
     totalTramites: 1247,
@@ -117,16 +114,14 @@ const GovernmentDashboard = () => {
     }
   };
 
-  const filteredTramites =
-    selectedStatus === "todos"
-      ? tramitesList
-      : tramitesList.filter((tramite) => tramite.estado === selectedStatus);
-
   return (
     <AppLayout>
-     
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
+      <div className=" flex justify-center w-full bg-amber-300 h-screen">
+       <div className="m-auto font-semibold text-5xl"> <h1>En mantenimiento</h1></div>
+      </div>
+
+      <div className="space-y-6">
+        {/* <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
               Panel Principal
             </h2>
@@ -136,10 +131,10 @@ const GovernmentDashboard = () => {
                 Última actualización: {new Date().toLocaleDateString()}
               </span>
             </div>
-          </div>
+          </div> */}
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Stats Cards */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
@@ -207,10 +202,10 @@ const GovernmentDashboard = () => {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Charts */}
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Trámites por Mes
@@ -253,11 +248,10 @@ const GovernmentDashboard = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-          </div>
-        </div>
-     
+          </div> */}
+      </div>
     </AppLayout>
   );
-};
+}
 
-export default GovernmentDashboard;
+export default Dashboard;
