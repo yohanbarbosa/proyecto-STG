@@ -103,6 +103,24 @@ function Funcionarios() {
     setShowModal(true);
   };
 
+  const abrirModalEditar = (funcionario) => {
+    setModalMode("editar");
+    setSelectedFuncionario(funcionario);
+    setFormData({
+      nombreCompleto: funcionario.nombreCompleto,
+      apellidoCompleto: funcionario.apellidoCompleto,
+      email: funcionario.email,
+      telefono: funcionario.telefono,
+      cargo: funcionario.cargo,
+      estado: funcionario.estado,
+    });
+    setShowModal(true);
+  };
+
+  const abrirModalEliminar = (funcionario) => {
+    setSelectedFuncionario(funcionario);
+    setShowDeleteModal(true);
+  };
 
   const cerrarModal = () => {
     setShowModal(false);
