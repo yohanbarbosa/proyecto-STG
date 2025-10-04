@@ -116,12 +116,12 @@ function Dashboard() {
 
   return (
     <AppLayout>
-      <div className=" flex justify-center w-full bg-amber-300 h-screen">
+      {/* <div className=" flex justify-center w-full bg-amber-300 h-screen">
        <div className="m-auto font-semibold text-5xl"> <h1>En mantenimiento</h1></div>
-      </div>
+      </div> */}
 
       <div className="space-y-6">
-        {/* <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
               Panel Principal
             </h2>
@@ -131,10 +131,10 @@ function Dashboard() {
                 Última actualización: {new Date().toLocaleDateString()}
               </span>
             </div>
-          </div> */}
+          </div>
 
         {/* Stats Cards */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
@@ -202,10 +202,10 @@ function Dashboard() {
                 />
               </div>
             </div>
-          </div> */}
+          </div>
 
         {/* Charts */}
-        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Trámites por Mes
@@ -248,7 +248,7 @@ function Dashboard() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-          </div> */}
+          </div>
       </div>
     </AppLayout>
   );
