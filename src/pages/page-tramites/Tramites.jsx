@@ -117,7 +117,10 @@ function TramitesList() {
     setShowModal(true);
   };
 
-
+  const abrirModalEliminar = (tramite) => {
+    setSelectedTramite(tramite);
+    setShowDeleteModal(true);
+  };
 
   const cerrarModal = () => {
     setShowModal(false);
