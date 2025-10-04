@@ -24,6 +24,8 @@ export default function Register() {
     confirmarContraseña: "",
   });
 
+  
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
