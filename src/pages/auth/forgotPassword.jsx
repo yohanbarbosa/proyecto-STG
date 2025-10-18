@@ -1,10 +1,10 @@
-import './login-global.css';
+import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 
 
 export default function Login() {
   return (
-    <div className="h-full flex items-center justify-center  bg-[#dee1e8] ">
+    <div className="h-screen flex items-center justify-center  bg-[#dee1e8] ">
       <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-lg overflow-hidden text-neutral-800 ">
         <div className="w-1/2 flex flex-col justify-center px-12">
           {/* Logo */}
@@ -39,12 +39,12 @@ export default function Login() {
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-200"></div>
           </div>
-          {/* Boton continuar */}
+        
           <button className="w-full bg-[#0366ff] text-white py-3 mt-2.5 rounded-lg font-semibold mb-4 hover:bg-blue-700 transition cursor-pointer">Enviar</button>
          
-          {/* Footer */}
+      
           <p className="text-xs text-gray-400">
-            Volver al  <a href="#" className="text-blue-500 hover:underline">Login</a>
+            Volver al  <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
           </p>
                     
         </div>

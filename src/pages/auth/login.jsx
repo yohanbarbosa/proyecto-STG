@@ -1,7 +1,6 @@
-import "./login-global.css";
 import { Icon } from "@iconify/react";
 import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { fetchSignInMethodsForEmail ,signInWithEmailAndPassword } from "firebase/auth";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -20,12 +19,11 @@ export default function Login() {
       return Swal.fire("Ingrese todos los campos");
     }
     try {
-      const userCredential = await signInWithEmailAndPassword(
+    await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      Swal.fire("Inicio de sesion exitoso");
       navigate("/dashboard");
     } catch (error) {
       console.error("el error is:", error);
@@ -46,7 +44,7 @@ export default function Login() {
     });
   };
   return (
-    <div className="h-full flex items-center justify-center  bg-[#dee1e8] ">
+    <div className="h-screen flex items-center justify-center  bg-[#dee1e8] ">
       <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-lg overflow-hidden text-neutral-800 ">
         <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-lg overflow-hidden text-black">
           <div className="w-1/2 flex flex-col justify-center px-12">
@@ -109,9 +107,9 @@ export default function Login() {
 
             <p className="text-xs text-gray-400 pt-2">
               Olvidaste tu contraseña?{" "}
-              <a href="#" className="text-blue-500 hover:underline">
+              <Link to="/forgotPassword" className="text-blue-500 hover:underline">
                 Recupérala
-              </a>
+              </Link>
             </p>
           </div>
           {/* Imagen */}
