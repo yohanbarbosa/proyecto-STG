@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
-import { auth, GoogleProvider } from "../../firebase";
-import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, GoogleProvider , providerGitHub } from "../../firebase";
+import { signInWithPopup, signInWithEmailAndPassword ,linkWithCredential } from "firebase/auth";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -10,6 +10,8 @@ export default function Login() {
     email: "",
     password: "",
   });
+
+
 
   const navigate = useNavigate();
 
@@ -61,6 +63,33 @@ export default function Login() {
           title: "Error al iniciar sesión con Google",
           text: "Ocurrió un error inesperado. Intenta nuevamente.",
         });
+      }
+    }
+  };
+
+  const loginWithGitHub = async () => {
+    try {
+      const result = await signInWithPopup(auth, providerGitHub);
+      console.log("Usuario autenticado:", result.user);
+      navigate ("/dashboard");
+    } catch (error) {
+      if (error.code === "auth/account-exists-with-different-credential") {
+        const existingEmail = error.customData.email;
+        const pendingCred = error.credential;
+  
+        // Primero pedimos que inicie sesión con el método original
+        const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
+        if (providers.includes("password")) {
+          const password = prompt("Tu cuenta usa contraseña. Ingresa tu contraseña para vincularla:");
+          const credential = EmailAuthProvider.credential(existingEmail, password);
+          const userCred = await signInWithEmailAndPassword(auth, existingEmail, password);
+  
+          // Una vez autenticado, enlazamos GitHub
+          await linkWithCredential(userCred.user, pendingCred);
+          console.log("Cuenta vinculada con éxito");
+        }
+      } else {
+        console.error("Error en el login:", error);
       }
     }
   };
@@ -127,11 +156,35 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="flex items-center justify-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-100 transition w-full"
+              className="flex items-center justify-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-100 transition w-full cursor-pointer select-none"
             >
               <Icon icon="logos:google-icon" width="24" />
               <span>Continuar con Google</span>
             </button>
+
+            <a
+              onClick={loginWithGitHub}
+              className="select-none cursor-pointer flex items-center justify-center gap-3 bg-[#24292e] text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-[#2d3339] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 
+    7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01
+    .37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+    0-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07
+    -1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.12
+    0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 4.47c.68 0 1.36.09 2 .26
+    1.53-1.04 2.2-.82 2.2-.82.44 1.11.16 1.92.08 2.12.51.56.82
+    1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54
+    1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013
+    8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              Iniciar sesión con GitHub
+            </a>
 
             {/* Botón continuar */}
             <button
@@ -141,6 +194,7 @@ export default function Login() {
               Continuar
             </button>
           </form>
+
 
           {/* Footer */}
           <p className="text-xs text-gray-400">

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signOut ,GithubAuthProvider  } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 
@@ -23,9 +23,10 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
 const GoogleProvider = new GoogleAuthProvider();
+const providerGitHub = new GithubAuthProvider();
 //conexion a db
 const db = getFirestore(app);
 
 //Exportar variable para consumo del proyecto
-export {auth, db, signOut, GoogleProvider }
+export {auth, db, signOut, GoogleProvider , providerGitHub}
 
