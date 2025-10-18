@@ -14,16 +14,18 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+
 // Initialize Firebase|
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 // Variable para obtener funcinalidad de autenticacion
 const auth = getAuth(app);
-const Provider = new GoogleAuthProvider();
 
+const GoogleProvider = new GoogleAuthProvider();
 //conexion a db
 const db = getFirestore(app);
 
 //Exportar variable para consumo del proyecto
-export {auth, Provider, db, signOut }
+export {auth, db, signOut, GoogleProvider }
+
