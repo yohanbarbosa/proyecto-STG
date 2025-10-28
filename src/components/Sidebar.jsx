@@ -8,7 +8,7 @@ function Sidebar() {
     <aside className="border-r-[1px] w-64 bg-white shadow-sm h-screen sticky top-0">
       <nav className="p-6 space-y-2">
         <Link
-          to="/"
+          to="/Dashboard"
         
           className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
             currentPath  === "/"
