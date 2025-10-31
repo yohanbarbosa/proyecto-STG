@@ -62,7 +62,7 @@ export default function Register() {
       });
 
       Swal.fire("Registrado", "Usuario creado con éxito", "success");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error de registro: ", error);
       if (error.code === "auth/email-already-in-use") {
@@ -184,7 +184,7 @@ export default function Register() {
           </div>
 
           <div className="flex items-center my-4">
-            <div className="flex-grow h-px bg-gray-200"></div>
+            <div className=" h-px bg-gray-200"></div>
           </div>
 
           {/* Botón */}

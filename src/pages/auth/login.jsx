@@ -205,7 +205,7 @@ export default function Login() {
             <button
               onClick={handleGoogleLogin}
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="logos:google-icon" width="20" />
               <span className="text-sm">Google</span>
@@ -214,7 +214,7 @@ export default function Login() {
             <button
               onClick={handleFacebookLogin}
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="logos:facebook" width="20" />
               <span className="text-sm">Facebook</span>
@@ -223,7 +223,7 @@ export default function Login() {
             <button
               onClick={loginWithGitHub}
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="mdi:github" width="20" />
               <span className="text-sm">GitHub</span>
