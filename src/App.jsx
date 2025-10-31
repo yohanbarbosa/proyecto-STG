@@ -7,21 +7,25 @@ import Funcionarios from "./pages/page-funcionarios/Funcionarios.jsx";
 import Login from "./pages/auth/login.jsx";
 import Register from "./pages/auth/register.jsx"
 import ForgotPassword from "./pages/auth/forgotPassword.jsx"
+import ResetPassword from "./pages/auth/resetPassword.jsx";
 import Home from "./pages/Layouts/Home.jsx";
+import ProtectedRoute from "./routes/protectedRoute.jsx";
 import './index.css';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home/>}></Route>
+        <Route path="/" element={<Login/>}></Route>
+        
         <Route path="/login" element={< Login/>}></Route>
         <Route path="/register" element={< Register/>}></Route>
         <Route path="/forgotPassword" element={< ForgotPassword/>}></Route>
-        <Route path="/dashboard" element={<Dashboard/>}></Route>
-        <Route path="/tramites" element={<Tramites />}></Route>
-        <Route path="/tipo-tramites" element={<TipoTramites/>}></Route>
-        <Route path="/funcionarios" element={<Funcionarios/>}></Route>
+        <Route path="/resetPassword" element={< ResetPassword/>}></Route>
+        <Route path="/dashboard" element={ <ProtectedRoute><Dashboard/></ProtectedRoute>}></Route>
+        <Route path="/tramites" element={<ProtectedRoute><Tramites /></ProtectedRoute>}></Route>
+        <Route path="/tipo-tramites" element={<ProtectedRoute><TipoTramites/></ProtectedRoute>}></Route>
+        <Route path="/funcionarios" element={<ProtectedRoute><Funcionarios/></ProtectedRoute>}></Route>
       </Routes>
     </BrowserRouter>
   );
