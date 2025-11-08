@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import { auth, GoogleProvider, providerFacebook, providerGitHub } from "../firebase";
+import { auth, GoogleProvider, providerFacebook, providerGitHub, db } from "../firebase.js";
+import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import {   linkWithPopup } from "firebase/auth";
+import {   linkWithPopup , signOut } from "firebase/auth";
 import Swal from "sweetalert2";
 
 function Topbar({ user }) {
@@ -10,8 +11,59 @@ function Topbar({ user }) {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleLogout = async () => {
-    await auth.signOut();
-    navigate("/login");
+    try {
+      const sessionId = localStorage.getItem("currentSessionId");
+      
+      if (sessionId) {
+        // Obtener datos de la sesión
+        const sessionRef = doc(db, "sessions", sessionId);
+        const sessionSnap = await getDoc(sessionRef);
+        
+        if (sessionSnap.exists()) {
+          const sessionData = sessionSnap.data();
+          const loginTime = sessionData.loginTime?.toDate();
+          const logoutTime = new Date();
+          
+          // Calcular duración en segundos
+          const duration = loginTime 
+            ? Math.floor((logoutTime - loginTime) / 1000)
+            : 0;
+  
+          // Actualizar sesión con hora de salida y duración
+          await updateDoc(sessionRef, {
+            logoutTime: serverTimestamp(),
+            duration: duration,
+            isActive: false,
+          });
+        }
+      }
+  
+      // Actualizar estado del usuario
+      if (auth.currentUser) {
+        await setDoc(doc(db, "users", auth.currentUser.uid), {
+          isOnline: false,
+          lastLogout: serverTimestamp(),
+        },
+      {merge: true});
+      }
+  
+      // Limpiar localStorage
+      localStorage.removeItem("currentSessionId");
+  
+      // Cerrar sesión
+      await signOut(auth);
+      navigate("/login");
+      
+      Swal.fire({
+        title: "Sesión cerrada",
+        text: "Has cerrado sesión exitosamente",
+        icon: "success",
+        timer: 2000,
+      });
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      Swal.fire("Error", "No se pudo cerrar la sesión correctamente", "error");
+    }
   };
 
   const handleLinkAccount = async (providerType) => {

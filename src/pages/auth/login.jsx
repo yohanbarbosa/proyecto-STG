@@ -1,17 +1,60 @@
 import { Icon } from "@iconify/react";
-import { auth,GoogleProvider, providerGitHub, providerFacebook,} from "../../firebase";
+import { auth,GoogleProvider, providerGitHub, providerFacebook,db} from "../../firebase";
 import {fetchSignInMethodsForEmail, signInWithPopup, signInWithEmailAndPassword, linkWithCredential,} from "firebase/auth";
+import { doc, setDoc, collection, serverTimestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ 
     email: "",
     password: "",
   });
 
   const navigate = useNavigate();
+
+  const registerLogin = async (user, provider) => {
+    try {
+      const sessionId = `${user.uid}_${Date.now()}`;
+      
+      // 1. Actualizar información del usuario
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          email: user.email,
+          name: user.displayName || "Sin nombre",
+          photoURL: user.photoURL || null,
+          lastLogin: serverTimestamp(),
+          isOnline: true,
+          providers: user.providerData.map(p => p.providerId),
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+  
+      // 2. Crear registro de sesión
+      await setDoc(doc(db, "sessions", sessionId), {
+        userId: user.uid,
+        email: user.email,
+        displayName: user.displayName || "Sin nombre",
+        provider: provider,
+        loginTime: serverTimestamp(),
+        logoutTime: null,
+        duration: null,
+        isActive: true,
+        userAgent: navigator.userAgent,
+      });
+  
+      // Guardar sessionId en localStorage para usarlo al cerrar sesión
+      localStorage.setItem("currentSessionId", sessionId);
+  
+      console.log("✅ Sesión registrada correctamente");
+    } catch (error) {
+      console.error("❌ Error al registrar sesión:", error);
+    }
+  };
+
 
   // --- Inicio de sesión con correo y contraseña ---
   const handleLogin = async (e) => {
@@ -21,7 +64,8 @@ export default function Login() {
       return Swal.fire("Ingrese todos los campos");
     }
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await registerLogin(result.user, "password");
       navigate("/dashboard");
     } catch (error) {
       console.error("El error es:", error);
@@ -41,6 +85,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, GoogleProvider);
       if (result.user) {
         Swal.fire("Inicio de sesión con Google exitoso!", "", "success");
+        await registerLogin(result.user, "google.com");
         navigate("/dashboard");
       }
     } catch (error) {
@@ -68,6 +113,7 @@ export default function Login() {
   const loginWithGitHub = async () => {
     try {
       const result = await signInWithPopup(auth, providerGitHub);
+      await registerLogin(result.user, "github.com");
       console.log("Usuario autenticado:", result.user);
       navigate("/dashboard");
     } catch (error) {
@@ -103,8 +149,9 @@ export default function Login() {
 
   const handleFacebookLogin = async () => {
     try {
-      await signInWithPopup(auth, providerFacebook);
+     const result = await signInWithPopup(auth, providerFacebook);
       Swal.fire("Inicio de sesión con Facebook exitoso!", "", "success");
+      await registerLogin(result.user, "facebook.com");
       navigate("/dashboard");
     } catch (error) {
       if (error.code === "auth/account-exists-with-different-credential") {
