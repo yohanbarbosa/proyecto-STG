@@ -10,6 +10,7 @@ import ForgotPassword from "./pages/auth/forgotPassword.jsx"
 import ResetPassword from "./pages/auth/resetPassword.jsx";
 import Home from "./pages/Layouts/Home.jsx";
 import ProtectedRoute from "./routes/protectedRoute.jsx";
+import Sessions from "./pages/page-sessions/Sessions.jsx";
 import './index.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/tramites" element={<ProtectedRoute><Tramites /></ProtectedRoute>}></Route>
         <Route path="/tipo-tramites" element={<ProtectedRoute><TipoTramites/></ProtectedRoute>}></Route>
         <Route path="/funcionarios" element={<ProtectedRoute><Funcionarios/></ProtectedRoute>}></Route>
+        <Route path="/sesiones" element={<ProtectedRoute><Sessions/></ProtectedRoute>}></Route>
       </Routes>
     </BrowserRouter>
   );
