@@ -15,7 +15,7 @@ function Sidebar({ isOpen, onClose }) {
     {
       path: "/sesiones",
       icon: "mdi:account-clock",
-      label: "Trámites",
+      label: "sesiones",
       matchPath: "/sesiones"
     },
     {
