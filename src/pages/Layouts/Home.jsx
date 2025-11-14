@@ -107,12 +107,12 @@ import { Link } from 'react-router-dom';
                 <a href="#" className="text-gray-700 hover:text-blue-600 font-medium py-2">Ayuda</a>
                 <a href="#" className="text-gray-700 hover:text-blue-600 font-medium py-2">Contacto</a>
                 <div className="pt-3 border-t border-gray-200 flex flex-col space-y-2">
-                  <button className="px-4 py-2 text-blue-600 font-medium border border-blue-600 rounded-lg">
+                  <Link to="login" className="px-4 py-2 text-blue-600 font-medium border border-blue-600 rounded-lg">
                     Ingresar
-                  </button>
-                  <button className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg">
+                  </Link>
+                  <Link to="register" className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg">
                     Registrarse
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
