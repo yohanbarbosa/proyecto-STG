@@ -23,7 +23,7 @@ export default function Login() {
         doc(db, "users", user.uid),
         {
           email: user.email,
-          name: user.displayName || "Sin nombre",
+          displayName: user.displayName || "Sin nombre",
           photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
           isOnline: true,

@@ -8,10 +8,10 @@ function Sidebar() {
     <aside className="border-r-[1px] w-64 bg-white shadow-sm h-screen sticky top-0">
       <nav className="p-6 space-y-2">
         <Link
-          to="/Dashboard"
+          to="/dashboard"
         
           className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-            currentPath  === "/"
+            currentPath  === "/dashboard"
               ? "bg-blue-50 text-blue-700"
               : "text-gray-700 hover:bg-gray-50"
           }`}
@@ -19,6 +19,20 @@ function Sidebar() {
           <Icon icon="material-symbols:description" className="w-5 h-5" />
           <span>Panel Principal</span>
         </Link>
+        
+        <Link
+          to="/sesiones"
+          className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+            currentPath  === "/sesiones"
+              ? "bg-blue-50 text-blue-700"
+              : "text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <Icon icon="mdi:account-group" className="w-5 h-5" />
+          <span>Sesiones</span>
+        </Link>
+
+
         <Link
           to="/tramites"
           className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
