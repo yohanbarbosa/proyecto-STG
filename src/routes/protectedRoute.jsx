@@ -1,17 +1,16 @@
 import { Navigate } from "react-router-dom";
-import { auth } from "../firebase";
-import Swal from "sweetalert2";
+import { useAuth } from "../context/AuthProvider.jsx";
 
-function protectedRoute({children}) {
-    const { user } = auth;
+export default function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
 
-    if(user){
-        Swal.fire("llamen a jesusssssssssss");
-        return <Navigate to="/login"/>
-    }
+  if (loading) {
+    return <p>Cargando...</p>; // puedes poner un spinner
+  }
 
-    return children;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 }
-
-
-export default protectedRoute;

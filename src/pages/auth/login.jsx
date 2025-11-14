@@ -1,24 +1,34 @@
 import { Icon } from "@iconify/react";
-import { auth,GoogleProvider, providerGitHub, providerFacebook,db} from "../../firebase";
-import {fetchSignInMethodsForEmail, signInWithPopup, signInWithEmailAndPassword, linkWithCredential,} from "firebase/auth";
-import { doc, setDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  auth,
+  GoogleProvider,
+  providerGitHub,
+  providerFacebook,
+  db,
+} from "../../firebase";
+import {
+  fetchSignInMethodsForEmail,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  linkWithCredential,
+} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
-  const [formData, setFormData] = useState({ 
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const registerLogin = async (user, provider) => {
     try {
       const sessionId = `${user.uid}_${Date.now()}`;
-      
-      // 1. Actualizar información del usuario
+
       await setDoc(
         doc(db, "users", user.uid),
         {
@@ -27,13 +37,12 @@ export default function Login() {
           photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
           isOnline: true,
-          providers: user.providerData.map(p => p.providerId),
+          providers: user.providerData.map((p) => p.providerId),
           updatedAt: serverTimestamp(),
         },
         { merge: true }
       );
-  
-      // 2. Crear registro de sesión
+
       await setDoc(doc(db, "sessions", sessionId), {
         userId: user.uid,
         email: user.email,
@@ -45,18 +54,14 @@ export default function Login() {
         isActive: true,
         userAgent: navigator.userAgent,
       });
-  
-      // Guardar sessionId en localStorage para usarlo al cerrar sesión
+
       localStorage.setItem("currentSessionId", sessionId);
-  
       console.log("✅ Sesión registrada correctamente");
     } catch (error) {
       console.error("❌ Error al registrar sesión:", error);
     }
   };
 
-
-  // --- Inicio de sesión con correo y contraseña ---
   const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
@@ -79,7 +84,6 @@ export default function Login() {
     }
   };
 
-  // --- Inicio de sesión con Google (optimizado) ---
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, GoogleProvider);
@@ -90,8 +94,6 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error de autenticación:", error);
-
-      // Detectar si el usuario cerró manualmente el popup
       if (error.code === "auth/popup-closed-by-user") {
         Swal.fire({
           icon: "info",
@@ -120,8 +122,6 @@ export default function Login() {
       if (error.code === "auth/account-exists-with-different-credential") {
         const existingEmail = error.customData.email;
         const pendingCred = error.credential;
-
-        // Primero pedimos que inicie sesión con el método original
         const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
         if (providers.includes("password")) {
           const password = prompt(
@@ -136,8 +136,6 @@ export default function Login() {
             existingEmail,
             password
           );
-
-          // Una vez autenticado, enlazamos GitHub
           await linkWithCredential(userCred.user, pendingCred);
           console.log("Cuenta vinculada con éxito");
         }
@@ -149,7 +147,7 @@ export default function Login() {
 
   const handleFacebookLogin = async () => {
     try {
-     const result = await signInWithPopup(auth, providerFacebook);
+      const result = await signInWithPopup(auth, providerFacebook);
       Swal.fire("Inicio de sesión con Facebook exitoso!", "", "success");
       await registerLogin(result.user, "facebook.com");
       navigate("/dashboard");
@@ -161,7 +159,6 @@ export default function Login() {
           "warning"
         );
       }
-
       console.error(error);
     }
   };
@@ -173,139 +170,214 @@ export default function Login() {
     });
   };
 
-  // --- JSX principal ---
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#dee1e8] p-4">
-      <div className="flex flex-col md:flex-row w-full max-w-[900px] bg-white rounded-2xl shadow-lg overflow-hidden text-neutral-800">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-gray-50 to-blue-100 p-4">
+    
+        <Link className=" px-4 py-2 rounded-tl-lg rounded-br-lg left-5 top-[20px] absolute z-50 bg-blue-500 hover:border-[1px] border-black" to="/">Volver</Link>
+     
+      <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Sección del formulario */}
-        <div className="py-6  w-full md:w-1/2 flex flex-col justify-center px-6 ">
+        <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-8 sm:py-12">
           {/* Logo */}
-          <div className="mb-6 md:mb-8 mt-1.5 flex flex-col items-center">
-            <Icon
-              icon="mdi:adjust"
-              width="48"
-              height="48"
-              className="md:w-16 md:h-16"
-            />
-            <span className="font-bold text-xs text-gray-800 mt-2 text-center">
+          <div className="mb-6 sm:mb-8 flex flex-col items-center">
+            <div className="bg-blue-100 p-3 rounded-full mb-3">
+              <Icon
+                icon="mdi:office-building"
+                width="48"
+                height="48"
+                className="text-blue-600"
+              />
+            </div>
+            <span className="font-bold text-xs sm:text-sm text-gray-800 text-center max-w-[250px]">
               Sistema de trámites gubernamentales
             </span>
           </div>
 
-          {/* Texto de bienvenida */}
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Bienvenido</h2>
-          <p className="text-gray-500 mb-4 md:mb-6">
-            Bienvenido, ingrese sus datos
-          </p>
+          {/* Título */}
+          <div className="mb-6 sm:mb-8 text-center md:text-left">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
+              Bienvenido
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600">
+              Ingresa tus credenciales para continuar
+            </p>
+          </div>
 
-          {/* Formulario de inicio de sesión */}
-          <form onSubmit={handleLogin}>
-            <div className="mb-4">
-              <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
-                <Icon icon="mdi:account" width="24" height="24" />
+          {/* Formulario */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Correo electrónico
+              </label>
+              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2.5 bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition">
+                <Icon
+                  icon="mdi:email-outline"
+                  width="20"
+                  height="20"
+                  className="text-gray-400 mr-2"
+                />
                 <input
                   name="email"
                   type="email"
-                  className="bg-transparent outline-none flex-1 text-sm md:text-base"
-                  placeholder="Usuario o correo electrónico"
+                  className="bg-transparent outline-none flex-1 text-sm sm:text-base text-gray-900 placeholder-gray-400"
+                  placeholder="tu@email.com"
                   value={formData.email}
                   onChange={handleChange}
                 />
               </div>
             </div>
-            <div className="mb-4">
-              <div className="flex items-center border rounded-lg space-x-1 px-3 py-2 bg-gray-50">
-                <Icon icon="mdi:password" width="24" height="24" />
+
+            {/* Contraseña */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contraseña
+              </label>
+              <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2.5 bg-gray-50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition">
+                <Icon
+                  icon="mdi:lock-outline"
+                  width="20"
+                  height="20"
+                  className="text-gray-400 mr-2"
+                />
                 <input
                   name="password"
-                  type="password"
-                  className="bg-transparent outline-none flex-1 text-sm md:text-base"
-                  placeholder="Ingrese su contraseña"
+                  type={showPassword ? "text" : "password"}
+                  className="bg-transparent outline-none flex-1 text-sm sm:text-base text-gray-900 placeholder-gray-400"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="ml-2 text-gray-400 hover:text-gray-600 transition"
+                >
+                  <Icon
+                    icon={showPassword ? "mdi:eye-off" : "mdi:eye"}
+                    width="20"
+                    height="20"
+                  />
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center my-4">
-              <div className=" h-px bg-gray-200"></div>
-            </div>
-
-            {/* Botón continuar */}
+            {/* Botón de login */}
             <button
               type="submit"
-              className="w-full bg-[#0366ff] text-white py-2.5 md:py-3 mt-2.5 rounded-lg font-semibold mb-4 hover:bg-blue-700 transition cursor-pointer text-sm md:text-base"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-2 text-sm sm:text-base"
             >
-              Continuar
+              <Icon icon="mdi:login" className="w-5 h-5" />
+              <span>Iniciar Sesión</span>
             </button>
           </form>
 
           {/* Divisor */}
-          <div className="flex items-center my-4">
-            <div className=" h-px bg-gray-300"></div>
-            <span className="px-4 text-gray-500 text-sm">O continúa con</span>
-            <div className=" h-px bg-gray-300"></div>
+          <div className="flex items-center my-6">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="px-4 text-gray-500 text-xs sm:text-sm">
+              O continúa con
+            </span>
+            <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Botones de redes sociales */}
-          <div className="flex gap-3 mb-4">
+          {/* Botones sociales */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
             <button
               onClick={handleGoogleLogin}
               type="button"
-              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center justify-center gap-2 border border-gray-300 py-2.5 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="logos:google-icon" width="20" />
-              <span className="text-sm">Google</span>
+              <span className="text-sm hidden sm:inline">Google</span>
             </button>
-
             <button
               onClick={handleFacebookLogin}
               type="button"
-              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center justify-center gap-2 border border-gray-300 py-2.5 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="logos:facebook" width="20" />
-              <span className="text-sm">Facebook</span>
+              <span className="text-sm hidden sm:inline">Facebook</span>
             </button>
-
             <button
               onClick={loginWithGitHub}
               type="button"
-              className=" cursor-pointer flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center justify-center gap-2 border border-gray-300 py-2.5 rounded-lg hover:bg-gray-50 transition"
             >
               <Icon icon="mdi:github" width="20" />
-              <span className="text-sm">GitHub</span>
+              <span className="text-sm hidden sm:inline">GitHub</span>
             </button>
           </div>
 
-          {/* Footer */}
-          <p className="text-xs text-gray-400">
-            ¿No tienes una cuenta?{" "}
-            <Link to="/register" className="text-blue-500 hover:underline">
-              Regístrate
-            </Link>
-          </p>
-
-          <p className="text-xs text-gray-400 pt-2">
-            ¿Olvidaste tu contraseña?{" "}
-            <Link
-              to="/forgotPassword"
-              className="text-blue-500 hover:underline"
-            >
-              Recupérala
-            </Link>
-          </p>
+          {/* Links */}
+          <div className="space-y-2 text-center md:text-left">
+            <p className="text-xs sm:text-sm text-gray-600">
+              ¿No tienes cuenta?{" "}
+              <Link
+                to="/register"
+                className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+              >
+                Regístrate
+              </Link>
+            </p>
+            <p className="text-xs sm:text-sm text-gray-600">
+              ¿Olvidaste tu contraseña?{" "}
+              <Link
+                to="/forgotPassword"
+                className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+              >
+                Recupérala
+              </Link>
+            </p>
+          </div>
         </div>
 
-        {/* Imagen lateral - Oculta en móviles */}
-        <div
-          className="hidden md:flex md:w-1/2 bg-blue-100 items-center justify-center min-h-[400px]"
-          style={{
-            backgroundImage:
-              "url('https://static.vecteezy.com/system/resources/previews/020/265/111/non_2x/world-map-connection-futuristic-modern-website-background-or-cover-page-for-technology-and-finance-concept-and-education-future-company-vector.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        ></div>
+        {/* Panel lateral - Desktop */}
+        <div className="hidden md:block md:w-1/2 bg-gradient-to-br from-blue-500 to-blue-700 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div
+              className="w-full h-full"
+              style={{
+                backgroundImage:
+                  "url('https://static.vecteezy.com/system/resources/previews/020/265/111/non_2x/world-map-connection-futuristic-modern-website-background-or-cover-page-for-technology-and-finance-concept-and-education-future-company-vector.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          </div>
+          <div className="relative h-full flex flex-col items-center justify-center p-8 text-white z-10">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 max-w-md">
+              <Icon
+                icon="mdi:shield-account"
+                width="64"
+                height="64"
+                className="mx-auto mb-4"
+              />
+              <h3 className="text-2xl font-bold mb-3 text-center">
+                Acceso Seguro
+              </h3>
+              <p className="text-sm text-center text-blue-100 leading-relaxed">
+                Tu información está protegida con los más altos estándares de
+                seguridad.
+              </p>
+            </div>
+            <div className="absolute top-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+            <div className="absolute bottom-10 left-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+          </div>
+        </div>
+
+        {/* Banner móvil */}
+        <div className="md:hidden bg-gradient-to-r from-blue-500 to-blue-700 p-4 sm:p-6">
+          <div className="flex items-center justify-center space-x-4 text-white">
+            <Icon icon="mdi:shield-check" className="w-8 h-8 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold">Acceso seguro</p>
+              <p className="text-xs text-blue-100">
+                Tu información está protegida
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
