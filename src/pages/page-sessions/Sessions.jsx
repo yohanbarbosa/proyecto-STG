@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import AppLayout from "../../components/AppLayout";
+import ExportExcel from "../../components/ExportExcel.jsx";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
@@ -149,16 +150,7 @@ export default function AdminPanel() {
   return (
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-            Panel de Administración
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Gestiona usuarios y sesiones del sistema
-          </p>
-        </div>
-
+      
         {/* Tabs */}
         <div className="border-b border-gray-200">
           <div className="flex gap-2 sm:gap-4 overflow-x-auto">
@@ -211,13 +203,20 @@ export default function AdminPanel() {
             )}
           </div>
 
+          
+          <div className="flex space-x-3 ">
+          {activeTab === "users" && (
+           <ExportExcel data={users} fileName="usuarios" />
+          )}
           <button
             onClick={loadData}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-sm"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-sm cursor-pointer"
           >
             <Icon icon="mdi:refresh" className="w-5 h-5" />
             <span className="hidden sm:inline">Actualizar</span>
           </button>
+          </div>
+          
         </div>
 
         {/* Contador */}
