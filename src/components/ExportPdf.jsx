@@ -87,7 +87,7 @@ function ExportPdf({ data, fileName }) {
     >
       <Icon icon="mdi:file-pdf-box" className="w-5 h-5 text-white" />
       <span className="hidden sm:inline">
-        {loading ? "Descargando..." : "Exportar Excel"}
+        {loading ? "Descargando..." : "Exportar PDF"}
       </span>
     </button>
   );
