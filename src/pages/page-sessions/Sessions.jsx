@@ -4,13 +4,15 @@ import { Icon } from "@iconify/react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import AppLayout from "../../components/AppLayout";
+import ExportExcel from "../../components/ExportExcel.jsx";
+import ExportPdf from "../../components/ExportPdf.jsx";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("users");
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -76,7 +78,7 @@ export default function AdminPanel() {
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
-    
+
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
@@ -149,37 +151,26 @@ export default function AdminPanel() {
   return (
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-            Panel de Administración
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Gestiona usuarios y sesiones del sistema
-          </p>
-        </div>
 
         {/* Tabs */}
         <div className="border-b border-gray-200">
           <div className="flex gap-2 sm:gap-4 overflow-x-auto">
             <button
               onClick={() => setActiveTab("users")}
-              className={`pb-3 px-3 sm:px-4 font-semibold transition whitespace-nowrap text-sm sm:text-base ${
-                activeTab === "users"
+              className={`pb-3 px-3 sm:px-4 font-semibold transition whitespace-nowrap text-sm sm:text-base ${activeTab === "users"
                   ? "border-b-2 border-blue-500 text-blue-600"
                   : "text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               <Icon icon="mdi:account-group" className="inline mr-1 sm:mr-2" />
               Usuarios ({users.length})
             </button>
             <button
               onClick={() => setActiveTab("sessions")}
-              className={`pb-3 px-3 sm:px-4 font-semibold transition whitespace-nowrap text-sm sm:text-base ${
-                activeTab === "sessions"
+              className={`pb-3 px-3 sm:px-4 font-semibold transition whitespace-nowrap text-sm sm:text-base ${activeTab === "sessions"
                   ? "border-b-2 border-blue-500 text-blue-600"
                   : "text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               <Icon icon="mdi:clock-outline" className="inline mr-1 sm:mr-2" />
               Sesiones ({sessions.length})
@@ -190,9 +181,9 @@ export default function AdminPanel() {
         {/* Barra de búsqueda */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
           <div className="relative flex-1 max-w-md">
-            <Icon 
-              icon="mdi:magnify" 
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" 
+            <Icon
+              icon="mdi:magnify"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
             />
             <input
               type="text"
@@ -211,13 +202,31 @@ export default function AdminPanel() {
             )}
           </div>
 
-          <button
-            onClick={loadData}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-sm"
-          >
-            <Icon icon="mdi:refresh" className="w-5 h-5" />
-            <span className="hidden sm:inline">Actualizar</span>
-          </button>
+
+          <div className="flex space-x-3 ">
+            {activeTab === "users" && (
+              <ExportExcel data={users} fileName="usuarios" />
+            )}
+            {activeTab === "sessions" && (
+              <ExportExcel data={sessions} fileName="sesiones" />
+            )}
+
+            {activeTab === "users" && (
+              <ExportPdf data={users} fileName="usuarios" />
+            )}
+            {activeTab === "sessions" && (
+              <ExportPdf data={sessions} fileName="sesiones" />
+            )}
+
+            <button
+              onClick={loadData}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-sm cursor-pointer"
+            >
+              <Icon icon="mdi:refresh" className="w-5 h-5" />
+              <span className="hidden sm:inline">Actualizar</span>
+            </button>
+          </div>
+
         </div>
 
         {/* Contador */}
@@ -301,9 +310,8 @@ export default function AdminPanel() {
                             {formatDate(user.lastLogin)}
                           </td>
                           <td className="px-4 lg:px-6 py-4">
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
-                              user.isOnline ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                            }`}>
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${user.isOnline ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                              }`}>
                               {user.isOnline ? "🟢 En línea" : "⚫ Offline"}
                             </span>
                           </td>
@@ -347,9 +355,8 @@ export default function AdminPanel() {
                           <p className="text-xs text-gray-600 truncate">{user.email}</p>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ml-2 ${
-                        user.isOnline ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ml-2 ${user.isOnline ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                        }`}>
                         {user.isOnline ? "🟢" : "⚫"}
                       </span>
                     </div>
@@ -445,9 +452,8 @@ export default function AdminPanel() {
                             {session.duration ? formatDuration(session.duration) : "En curso..."}
                           </td>
                           <td className="px-4 lg:px-6 py-4">
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
-                              session.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                            }`}>
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${session.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                              }`}>
                               {session.isActive ? "🟢 Activa" : "⚫ Fin"}
                             </span>
                           </td>
@@ -483,9 +489,8 @@ export default function AdminPanel() {
                           <p className="text-xs text-gray-600 truncate">{session.email}</p>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ml-2 ${
-                        session.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ml-2 ${session.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                        }`}>
                         {session.isActive ? "🟢" : "⚫"}
                       </span>
                     </div>
@@ -526,16 +531,15 @@ export default function AdminPanel() {
             <div className="text-xs sm:text-sm text-gray-600">
               Página {currentPage} de {totalPages}
             </div>
-            
+
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className={`px-2 sm:px-3 py-2 rounded-lg transition flex items-center gap-1 text-xs sm:text-sm ${
-                  currentPage === 1
+                className={`px-2 sm:px-3 py-2 rounded-lg transition flex items-center gap-1 text-xs sm:text-sm ${currentPage === 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <Icon icon="mdi:chevron-left" className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Anterior</span>
@@ -551,11 +555,10 @@ export default function AdminPanel() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-2 sm:px-3 py-2 rounded-lg transition text-xs sm:text-sm ${
-                        currentPage === page
+                      className={`px-2 sm:px-3 py-2 rounded-lg transition text-xs sm:text-sm ${currentPage === page
                           ? "bg-blue-500 text-white font-semibold"
                           : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       {page}
                     </button>
@@ -566,11 +569,10 @@ export default function AdminPanel() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className={`px-2 sm:px-3 py-2 rounded-lg transition flex items-center gap-1 text-xs sm:text-sm ${
-                  currentPage === totalPages
+                className={`px-2 sm:px-3 py-2 rounded-lg transition flex items-center gap-1 text-xs sm:text-sm ${currentPage === totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <span className="hidden sm:inline">Siguiente</span>
                 <Icon icon="mdi:chevron-right" className="w-4 h-4 sm:w-5 sm:h-5" />
