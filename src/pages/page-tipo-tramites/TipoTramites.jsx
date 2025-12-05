@@ -10,6 +10,8 @@ import {
 import AppLayout from "../../components/AppLayout";
 import { db } from "../../firebase";
 import { Icon } from "@iconify/react";
+import ExportExcel from "../../components/ExportExcel";
+import ExportPdf from "../../components/ExportPdf";
 
 function TipoTramites() {
   const [tipoTramites, setTipoTramites] = useState([]);
@@ -18,6 +20,7 @@ function TipoTramites() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [modalMode, setModalMode] = useState("crear");
   const [selectedTipoTramite, setSelectedTipoTramite] = useState(null);
+  const [search, setSearch] = useState("");
 
   // Formulario
   const [formData, setFormData] = useState({
@@ -51,8 +54,10 @@ function TipoTramites() {
 
     try {
       const ahora = new Date();
-      const fechaFormateada = `${ahora.getDate()}/${ahora.getMonth() + 1}/${ahora.getFullYear()}`;
-      
+      const fechaFormateada = `${ahora.getDate()}/${
+        ahora.getMonth() + 1
+      }/${ahora.getFullYear()}`;
+
       const nuevoTipoTramite = {
         ...formData,
         fechaCreacion: fechaFormateada,
@@ -79,8 +84,10 @@ function TipoTramites() {
 
     try {
       const ahora = new Date();
-      const fechaFormateada = `${ahora.getDate()}/${ahora.getMonth() + 1}/${ahora.getFullYear()}`;
-      
+      const fechaFormateada = `${ahora.getDate()}/${
+        ahora.getMonth() + 1
+      }/${ahora.getFullYear()}`;
+
       const tipoTramiteRef = doc(db, "tipo-tramites", selectedTipoTramite.id);
       const dataToUpdate = {
         ...formData,
@@ -152,6 +159,10 @@ function TipoTramites() {
     }));
   };
 
+  const filteredTipoTramites = tipoTramites.filter((t) =>
+    (t.nombre + " " + t.estado).toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
@@ -165,13 +176,49 @@ function TipoTramites() {
               Gestiona los tipos de trámites disponibles
             </p>
           </div>
-          <button
-            onClick={abrirModalCrear}
-            className="bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors text-sm sm:text-base shadow-sm"
-          >
-            <Icon icon="mdi:plus" className="w-5 h-5" />
-            <span>Nuevo Tipo</span>
-          </button>
+
+          <div className="flex gap-3 mt-4">
+            <ExportExcel data={tipoTramites} fileName="tipo_tramites" />
+            <ExportPdf data={tipoTramites} fileName="tipo_tramites" />
+            <button
+              onClick={abrirModalCrear}
+              className="bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors text-sm sm:text-base shadow-sm"
+            >
+              <Icon icon="mdi:plus" className="w-5 h-5" />
+              <span>Nuevo Tipo</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Barra de búsqueda y botones de exportación */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Icon
+              icon="mdi:magnify"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
+            />
+            <input
+              type="text"
+              placeholder="Buscar tipos de tramites..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <Icon icon="mdi:close-circle" className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Contador */}
+        <div className="text-xs sm:text-sm text-gray-600">
+          Mostrando {filteredTipoTramites.length} de {tipoTramites.length}{" "}
+          tipos de trámites
+          {search && ` (filtrado)`}
         </div>
 
         {!loading && (
@@ -200,7 +247,7 @@ function TipoTramites() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {tipoTramites.length === 0 ? (
+                    {filteredTipoTramites.length === 0 ? (
                       <tr>
                         <td
                           colSpan="5"
@@ -214,7 +261,7 @@ function TipoTramites() {
                         </td>
                       </tr>
                     ) : (
-                      tipoTramites.map((tipoTramite) => (
+                      filteredTipoTramites.map((tipoTramite) => (
                         <tr key={tipoTramite.id} className="hover:bg-gray-50">
                           <td className="px-4 lg:px-6 py-4">
                             <div className="flex items-center">
@@ -298,7 +345,9 @@ function TipoTramites() {
                     icon="mdi:file-document-multiple-outline"
                     className="w-12 h-12 mx-auto mb-3 text-gray-400"
                   />
-                  <p className="text-gray-500">No se encontraron tipos de trámites</p>
+                  <p className="text-gray-500">
+                    No se encontraron tipos de trámites
+                  </p>
                 </div>
               ) : (
                 tipoTramites.map((tipoTramite) => (
@@ -351,7 +400,9 @@ function TipoTramites() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 mb-0.5">Actualización</p>
+                        <p className="text-xs text-gray-500 mb-0.5">
+                          Actualización
+                        </p>
                         <p className="text-xs font-medium text-gray-900">
                           {tipoTramite.ultimaActualizacion || "Sin fecha"}
                         </p>
@@ -498,8 +549,10 @@ function TipoTramites() {
               </h3>
               <p className="text-sm sm:text-base text-gray-600 text-center mb-6">
                 ¿Está seguro de que desea eliminar el tipo de trámite{" "}
-                <strong className="text-gray-900">{selectedTipoTramite.nombre}</strong>? Esta acción no se
-                puede deshacer.
+                <strong className="text-gray-900">
+                  {selectedTipoTramite.nombre}
+                </strong>
+                ? Esta acción no se puede deshacer.
               </p>
               <div className="flex flex-col-reverse sm:flex-row items-center justify-center space-y-3 space-y-reverse sm:space-y-0 sm:space-x-3">
                 <button

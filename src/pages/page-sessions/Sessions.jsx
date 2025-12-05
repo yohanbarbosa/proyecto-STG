@@ -1,4 +1,3 @@
-// pages/AdminPanel.jsx
 import { useState, useEffect, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
@@ -205,17 +204,29 @@ export default function AdminPanel() {
 
           <div className="flex space-x-3 ">
             {activeTab === "users" && (
-              <ExportExcel data={users} fileName="usuarios" />
+              <ExportExcel 
+                data={filteredData} 
+                fileName={searchTerm ? `usuarios_filtrados` : "usuarios"} 
+              />
             )}
             {activeTab === "sessions" && (
-              <ExportExcel data={sessions} fileName="sesiones" />
+              <ExportExcel 
+                data={filteredData} 
+                fileName={searchTerm ? `sesiones_filtradas` : "sesiones"} 
+              />
             )}
 
             {activeTab === "users" && (
-              <ExportPdf data={users} fileName="usuarios" />
+              <ExportPdf 
+                data={filteredData} 
+                fileName={searchTerm ? `usuarios_filtrados` : "usuarios"} 
+              />
             )}
             {activeTab === "sessions" && (
-              <ExportPdf data={sessions} fileName="sesiones" />
+              <ExportPdf 
+                data={filteredData} 
+                fileName={searchTerm ? `sesiones_filtradas` : "sesiones"} 
+              />
             )}
 
             <button
