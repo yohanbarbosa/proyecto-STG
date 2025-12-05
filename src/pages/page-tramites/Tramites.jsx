@@ -10,6 +10,8 @@ import {
 import AppLayout from "../../components/AppLayout";
 import { db } from "../../firebase";
 import { Icon } from "@iconify/react";
+import ExportExcel from "../../components/ExportExcel";
+import ExportPdf from "../../components/ExportPdf";
 
 function TramitesList() {
   const [tramites, setTramites] = useState([]);
@@ -18,6 +20,7 @@ function TramitesList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [modalMode, setModalMode] = useState("crear");
   const [selectedTramite, setSelectedTramite] = useState(null);
+  const [search, setSearch] = useState("");
 
   const [formData, setFormData] = useState({
     tipo: "",
@@ -40,7 +43,7 @@ function TramitesList() {
         setTramites(data);
       },
       (error) => {
-        console.error("Error al escuchar trámites:", error);
+        console.error("Error al traer trámites:", error);
       }
     );
     return () => unsubscribe();
@@ -127,6 +130,12 @@ function TramitesList() {
     setSelectedTramite(null);
   };
 
+  const filteredTramites = tramites.filter((t) =>
+    (t.solicitante + " " + t.tipo + " " + t.departamento + " " + t.estado)
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
   const resetForm = () => {
     setFormData({
       tipo: "",
@@ -177,13 +186,49 @@ function TramitesList() {
               Administra las solicitudes de trámites
             </p>
           </div>
-          <button
-            onClick={abrirModalCrear}
-            className="bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors shadow-sm text-sm sm:text-base"
-          >
-            <Icon icon="mdi:plus" className="w-5 h-5" />
-            <span>Nuevo Trámite</span>
-          </button>
+          <div className="flex gap-3 mt-4">
+            <ExportExcel data={filteredTramites} fileName="tramites" />
+            <ExportPdf data={filteredTramites} fileName="tramites" />
+            <button
+              onClick={abrirModalCrear}
+              className="bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors shadow-sm text-sm sm:text-base"
+            >
+              <Icon icon="mdi:plus" className="w-5 h-5" />
+              <span>Nuevo Trámite</span>
+            </button>
+          </div>
+        </div>
+
+
+        {/* Barra de búsqueda y botones de exportación */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Icon
+              icon="mdi:magnify"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
+            />
+            <input
+              type="text"
+              placeholder="Buscar tramites..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <Icon icon="mdi:close-circle" className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Contador */}
+        <div className="text-xs sm:text-sm text-gray-600">
+          Mostrando {filteredTramites.length} de {filteredTramites.length}{" "}
+          trámites
+          {search && ` (filtrado)`}
         </div>
 
         {!loading && (
@@ -218,20 +263,29 @@ function TramitesList() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {tramites.length === 0 ? (
+                    {filteredTramites.length === 0 ? (
                       <tr>
-                        <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-                          <Icon icon="mdi:file-document-outline" className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                        <td
+                          colSpan="7"
+                          className="px-6 py-12 text-center text-gray-500"
+                        >
+                          <Icon
+                            icon="mdi:file-document-outline"
+                            className="w-12 h-12 mx-auto mb-2 text-gray-400"
+                          />
                           <p>No se encontraron trámites</p>
                         </td>
                       </tr>
                     ) : (
-                      tramites.map((tramite) => (
+                      filteredTramites.map((tramite) => (
                         <tr key={tramite.id} className="hover:bg-gray-50">
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <Icon icon="mdi:account" className="w-5 h-5 text-blue-600" />
+                                <Icon
+                                  icon="mdi:account"
+                                  className="w-5 h-5 text-blue-600"
+                                />
                               </div>
                               <div className="ml-3">
                                 <div className="text-sm font-medium text-gray-900">
@@ -241,26 +295,47 @@ function TramitesList() {
                             </div>
                           </td>
                           <td className="px-4 py-4">
-                            <div className="text-sm text-gray-900">{tramite.tipo}</div>
+                            <div className="text-sm text-gray-900">
+                              {tramite.tipo}
+                            </div>
                             <div className="text-xs text-gray-500 truncate max-w-[150px]">
                               {tramite.descripcion}
                             </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-900">{tramite.departamento}</span>
+                            <span className="text-sm text-gray-900">
+                              {tramite.departamento}
+                            </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{tramite.email}</div>
-                            <div className="text-xs text-gray-500">{tramite.telefono}</div>
+                            <div className="text-sm text-gray-900">
+                              {tramite.email}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {tramite.telefono}
+                            </div>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(tramite.estado)}`}>
-                              <Icon icon={getStatusIcon(tramite.estado)} className="w-4 h-4" />
-                              <span className="capitalize">{tramite.estado}</span>
+                            <span
+                              className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                                tramite.estado
+                              )}`}
+                            >
+                              <Icon
+                                icon={getStatusIcon(tramite.estado)}
+                                className="w-4 h-4"
+                              />
+                              <span className="capitalize">
+                                {tramite.estado}
+                              </span>
                             </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">
-                            {tramite.fechaCreado ? new Date(tramite.fechaCreado).toLocaleDateString("es-ES") : "Sin fecha"}
+                            {tramite.fechaCreado
+                              ? new Date(
+                                  tramite.fechaCreado
+                                ).toLocaleDateString("es-ES")
+                              : "Sin fecha"}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm">
                             <div className="flex items-center justify-end space-x-2">
@@ -268,13 +343,19 @@ function TramitesList() {
                                 onClick={() => abrirModalEditar(tramite)}
                                 className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
                               >
-                                <Icon icon="mdi:pencil-outline" className="w-5 h-5" />
+                                <Icon
+                                  icon="mdi:pencil-outline"
+                                  className="w-5 h-5"
+                                />
                               </button>
                               <button
                                 onClick={() => abrirModalEliminar(tramite)}
                                 className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                               >
-                                <Icon icon="mdi:delete-outline" className="w-5 h-5" />
+                                <Icon
+                                  icon="mdi:delete-outline"
+                                  className="w-5 h-5"
+                                />
                               </button>
                             </div>
                           </td>
@@ -290,27 +371,45 @@ function TramitesList() {
             <div className="lg:hidden space-y-4">
               {tramites.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
-                  <Icon icon="mdi:file-document-outline" className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                  <Icon
+                    icon="mdi:file-document-outline"
+                    className="w-12 h-12 mx-auto mb-3 text-gray-400"
+                  />
                   <p className="text-gray-500">No se encontraron trámites</p>
                 </div>
               ) : (
                 tramites.map((tramite) => (
-                  <div key={tramite.id} className="bg-white rounded-lg shadow-sm border p-4 space-y-3">
+                  <div
+                    key={tramite.id}
+                    className="bg-white rounded-lg shadow-sm border p-4 space-y-3"
+                  >
                     {/* Header */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3 flex-1 min-w-0">
                         <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Icon icon="mdi:account" className="w-5 h-5 text-blue-600" />
+                          <Icon
+                            icon="mdi:account"
+                            className="w-5 h-5 text-blue-600"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="text-sm font-semibold text-gray-900 truncate">
                             {tramite.solicitante}
                           </h3>
-                          <p className="text-xs text-gray-600 truncate">{tramite.tipo}</p>
+                          <p className="text-xs text-gray-600 truncate">
+                            {tramite.tipo}
+                          </p>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(tramite.estado)}`}>
-                        <Icon icon={getStatusIcon(tramite.estado)} className="w-3 h-3" />
+                      <span
+                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStatusColor(
+                          tramite.estado
+                        )}`}
+                      >
+                        <Icon
+                          icon={getStatusIcon(tramite.estado)}
+                          className="w-3 h-3"
+                        />
                         <span className="capitalize">{tramite.estado}</span>
                       </span>
                     </div>
@@ -318,20 +417,40 @@ function TramitesList() {
                     {/* Detalles */}
                     <div className="space-y-2 pt-3 border-t">
                       <div className="flex items-start text-xs">
-                        <Icon icon="mdi:office-building" className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">{tramite.departamento}</span>
+                        <Icon
+                          icon="mdi:office-building"
+                          className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5"
+                        />
+                        <span className="text-gray-700">
+                          {tramite.departamento}
+                        </span>
                       </div>
                       <div className="flex items-start text-xs">
-                        <Icon icon="mdi:email" className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 truncate">{tramite.email}</span>
+                        <Icon
+                          icon="mdi:email"
+                          className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5"
+                        />
+                        <span className="text-gray-700 truncate">
+                          {tramite.email}
+                        </span>
                       </div>
                       <div className="flex items-start text-xs">
-                        <Icon icon="mdi:phone" className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">{tramite.telefono}</span>
+                        <Icon
+                          icon="mdi:phone"
+                          className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5"
+                        />
+                        <span className="text-gray-700">
+                          {tramite.telefono}
+                        </span>
                       </div>
                       <div className="flex items-start text-xs">
-                        <Icon icon="mdi:text" className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 line-clamp-2">{tramite.descripcion}</span>
+                        <Icon
+                          icon="mdi:text"
+                          className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0 mt-0.5"
+                        />
+                        <span className="text-gray-700 line-clamp-2">
+                          {tramite.descripcion}
+                        </span>
                       </div>
                     </div>
 
@@ -368,12 +487,19 @@ function TramitesList() {
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                     {modalMode === "crear" ? "Nuevo Trámite" : "Editar Trámite"}
                   </h2>
-                  <button onClick={cerrarModal} className="text-gray-400 hover:text-gray-600 p-1">
+                  <button
+                    onClick={cerrarModal}
+                    className="text-gray-400 hover:text-gray-600 p-1"
+                  >
                     <Icon icon="mdi:close" className="w-6 h-6" />
                   </button>
                 </div>
 
-                <form onSubmit={modalMode === "crear" ? crearTramite : actualizarTramite}>
+                <form
+                  onSubmit={
+                    modalMode === "crear" ? crearTramite : actualizarTramite
+                  }
+                >
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -387,11 +513,21 @@ function TramitesList() {
                         className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       >
                         <option value="">Seleccione un tipo</option>
-                        <option value="Licencia de Construcción">Licencia de Construcción</option>
-                        <option value="Permiso de Funcionamiento">Permiso de Funcionamiento</option>
-                        <option value="Certificado de Residencia">Certificado de Residencia</option>
-                        <option value="Registro Mercantil">Registro Mercantil</option>
-                        <option value="Licencia Ambiental">Licencia Ambiental</option>
+                        <option value="Licencia de Construcción">
+                          Licencia de Construcción
+                        </option>
+                        <option value="Permiso de Funcionamiento">
+                          Permiso de Funcionamiento
+                        </option>
+                        <option value="Certificado de Residencia">
+                          Certificado de Residencia
+                        </option>
+                        <option value="Registro Mercantil">
+                          Registro Mercantil
+                        </option>
+                        <option value="Licencia Ambiental">
+                          Licencia Ambiental
+                        </option>
                       </select>
                     </div>
 
@@ -412,7 +548,9 @@ function TramitesList() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Email *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Email *
+                        </label>
                         <input
                           type="email"
                           name="email"
@@ -424,7 +562,9 @@ function TramitesList() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Teléfono *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Teléfono *
+                        </label>
                         <input
                           type="tel"
                           name="telefono"
@@ -439,7 +579,9 @@ function TramitesList() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Departamento *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Departamento *
+                        </label>
                         <select
                           name="departamento"
                           value={formData.departamento}
@@ -456,7 +598,9 @@ function TramitesList() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Estado *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Estado *
+                        </label>
                         <select
                           name="estado"
                           value={formData.estado}
@@ -473,7 +617,9 @@ function TramitesList() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Descripción *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Descripción *
+                      </label>
                       <textarea
                         name="descripcion"
                         value={formData.descripcion}
@@ -501,13 +647,20 @@ function TramitesList() {
                     >
                       {loading ? (
                         <>
-                          <Icon icon="mdi:loading" className="w-5 h-5 animate-spin" />
+                          <Icon
+                            icon="mdi:loading"
+                            className="w-5 h-5 animate-spin"
+                          />
                           <span>Guardando...</span>
                         </>
                       ) : (
                         <>
                           <Icon icon="mdi:content-save" className="w-5 h-5" />
-                          <span>{modalMode === "crear" ? "Crear Trámite" : "Guardar"}</span>
+                          <span>
+                            {modalMode === "crear"
+                              ? "Crear Trámite"
+                              : "Guardar"}
+                          </span>
                         </>
                       )}
                     </button>
@@ -523,14 +676,20 @@ function TramitesList() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6">
               <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
-                <Icon icon="mdi:alert-circle-outline" className="w-6 h-6 text-red-600" />
+                <Icon
+                  icon="mdi:alert-circle-outline"
+                  className="w-6 h-6 text-red-600"
+                />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 text-center mb-2">
                 ¿Eliminar trámite?
               </h3>
               <p className="text-sm sm:text-base text-gray-600 text-center mb-6">
                 ¿Está seguro de eliminar el trámite de{" "}
-                <strong className="text-gray-900">{selectedTramite.solicitante}</strong>?
+                <strong className="text-gray-900">
+                  {selectedTramite.solicitante}
+                </strong>
+                ?
               </p>
               <div className="flex flex-col-reverse sm:flex-row items-center justify-center space-y-3 space-y-reverse sm:space-y-0 sm:space-x-3">
                 <button
@@ -546,7 +705,10 @@ function TramitesList() {
                 >
                   {loading ? (
                     <>
-                      <Icon icon="mdi:loading" className="w-5 h-5 animate-spin" />
+                      <Icon
+                        icon="mdi:loading"
+                        className="w-5 h-5 animate-spin"
+                      />
                       <span>Eliminando...</span>
                     </>
                   ) : (
