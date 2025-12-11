@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router-dom';
+import ChatbotWidget from '../../components/ChatBot';
 
  function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -230,7 +231,9 @@ import { Link } from 'react-router-dom';
             <p className="text-gray-600">Acceso 24/7 desde cualquier dispositivo conectado</p>
           </div>
         </div>
-      </section> 
+      </section>
+
+      <ChatbotWidget></ChatbotWidget> 
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">

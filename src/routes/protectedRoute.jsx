@@ -5,7 +5,7 @@ export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <p>Cargando...</p>; // puedes poner un spinner
+    return <p>Cargando...</p>;
   }
 
   if (!user) {
