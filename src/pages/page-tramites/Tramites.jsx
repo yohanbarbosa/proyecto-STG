@@ -41,7 +41,7 @@ function TramitesList() {
   const estados = [
     { value: "pendiente", label: "Pendiente", color: "blue" },
     { value: "procesando", label: "Procesando", color: "yellow" },
-    { value: "completado", label: "Completado", color: "green" },
+    { value: "aprobado", label: "Aprobado", color: "green" },
     { value: "rechazado", label: "Rechazado", color: "red" },
   ];
 
