@@ -12,7 +12,16 @@ import {
   signInWithEmailAndPassword,
   linkWithCredential,
 } from "firebase/auth";
-import { doc, getDoc ,setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -25,78 +34,100 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const registerLogin = async (user, provider) => {
+    try {
+      const sessionId = `${user.uid}_${Date.now()}`;
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
 
-const registerLogin = async (user, provider) => {
-  try {
-    const sessionId = `${user.uid}_${Date.now()}`;
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+      // 👉 Solo si NO existe, se crea con rol
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          email: user.email,
+          displayName: user.displayName || "Sin nombre",
+          photoURL: user.photoURL || null,
+          role: "usuario",
+          createdAt: serverTimestamp(),
+          providers: [provider],
+          isOnline: true,
+        });
+      } else {
+        // 👉 Si ya existe, solo se actualiza info de sesión
+        await setDoc(
+          userRef,
+          {
+            lastLogin: serverTimestamp(),
+            isOnline: true,
+            updatedAt: serverTimestamp(),
+            providers: Array.from(
+              new Set([...(userSnap.data().providers || []), provider])
+            ),
+          },
+          { merge: true }
+        );
+      }
 
-    // 👉 Solo si NO existe, se crea con rol
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
+      // 🔐 Sesión
+      await setDoc(doc(db, "sessions", sessionId), {
+        userId: user.uid,
         email: user.email,
         displayName: user.displayName || "Sin nombre",
-        photoURL: user.photoURL || null,
-        role: "usuario",
-        createdAt: serverTimestamp(),
-        providers: [provider],
-        isOnline: true,
+        provider,
+        loginTime: serverTimestamp(),
+        logoutTime: null,
+        duration: null,
+        isActive: true,
+        userAgent: navigator.userAgent,
       });
-    } else {
-      // 👉 Si ya existe, solo se actualiza info de sesión
-      await setDoc(
-        userRef,
-        {
-          lastLogin: serverTimestamp(),
-          isOnline: true,
-          updatedAt: serverTimestamp(),
-          providers: Array.from(
-            new Set([
-              ...(userSnap.data().providers || []),
-              provider,
-            ])
-          ),
-        },
-        { merge: true }
-      );
+
+      localStorage.setItem("currentSessionId", sessionId);
+    } catch (error) {
+      console.error("❌ Error al registrar sesión:", error);
     }
+  };
 
-    // 🔐 Sesión
-    await setDoc(doc(db, "sessions", sessionId), {
-      userId: user.uid,
-      email: user.email,
-      displayName: user.displayName || "Sin nombre",
-      provider,
-      loginTime: serverTimestamp(),
-      logoutTime: null,
-      duration: null,
-      isActive: true,
-      userAgent: navigator.userAgent,
-    });
-
-    localStorage.setItem("currentSessionId", sessionId);
-  } catch (error) {
-    console.error("❌ Error al registrar sesión:", error);
-  }
-};
-
+  // ⚠️ IMPORTANTE: Necesitas agregar este import al inicio del archivo
+  // import { collection, query, where, getDocs } from "firebase/firestore";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
+
+    // Validar que los campos estén completos
     if (!email || !password) {
       return Swal.fire("Ingrese todos los campos");
     }
+
     try {
+      // Paso 1: Buscar usuario por email en Firestore usando query
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return Swal.fire("Este correo no está registrado en el sistema.");
+      }
+
+      // Paso 2: Si el correo existe, proceder con el login en Firebase Auth
       const result = await signInWithEmailAndPassword(auth, email, password);
+
+      // Paso 3: Registrar sesión
       await registerLogin(result.user, "password");
+
       navigate("/dashboard");
     } catch (error) {
       console.error("El error es:", error);
       switch (error.code) {
         case "auth/invalid-credential":
+        case "auth/user-not-found":
+        case "auth/wrong-password":
           Swal.fire("Correo o contraseña incorrectos.");
+          break;
+        case "auth/invalid-email":
+          Swal.fire("El formato del correo es inválido.");
+          break;
+        case "auth/user-disabled":
+          Swal.fire("Esta cuenta ha sido deshabilitada.");
           break;
         default:
           Swal.fire("Ocurrió un error inesperado. Intenta de nuevo.");
@@ -192,9 +223,13 @@ const registerLogin = async (user, provider) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-gray-50 to-blue-100 p-4">
-    
-        <Link className=" px-4 py-2 rounded-tl-lg rounded-br-lg left-5 top-[20px] absolute z-50 bg-blue-500 hover:border-[1px] border-black" to="/">Volver</Link>
-     
+      <Link
+        className=" px-4 py-2 rounded-tl-lg rounded-br-lg left-5 top-[20px] absolute z-50 bg-blue-500 hover:border-[1px] border-black"
+        to="/"
+      >
+        Volver
+      </Link>
+
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Sección del formulario */}
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-8 sm:py-12">

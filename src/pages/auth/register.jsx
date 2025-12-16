@@ -15,7 +15,7 @@ export default function Register() {
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
-    correo: "",
+    email: "",
     telefono: "",
     contraseña: "",
     confirmarContraseña: "",
@@ -41,7 +41,7 @@ export default function Register() {
   // Función de validación
   const validateForm = () => {
     const newErrors = {};
-    const { nombres, apellidos, correo, contraseña, confirmarContraseña } = formData;
+    const { nombres, apellidos, email, contraseña, confirmarContraseña } = formData;
 
     // Validar nombres
     if (!nombres.trim()) {
@@ -57,11 +57,11 @@ export default function Register() {
       newErrors.apellidos = "Los apellidos deben tener al menos 2 caracteres";
     }
 
-    // Validar correo
-    if (!correo.trim()) {
-      newErrors.correo = "El correo es obligatorio";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-      newErrors.correo = "El correo no es válido";
+    // Validar email
+    if (!email.trim()) {
+      newErrors.email = "El email es obligatorio";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "El email no es válido";
     }
 
     // Validar contraseña
@@ -104,8 +104,8 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const { nombres, apellidos, correo, contraseña } = formData;
-      const emaillower = correo.trim().toLowerCase();
+      const { nombres, apellidos, email, contraseña } = formData;
+      const emaillower = email.trim().toLowerCase();
       
       const userMethod = await createUserWithEmailAndPassword(auth, emaillower, contraseña);
       const user = userMethod.user;
@@ -118,7 +118,7 @@ export default function Register() {
         uid: user.uid,
         nombres: nombres.trim(),
         apellidos: apellidos.trim(),
-        correo: emaillower,
+        email: emaillower,
         estado: "pendiente",
         creado: new Date(),
         metodo: "contraseña",
@@ -140,10 +140,10 @@ export default function Register() {
       
       switch (error.code) {
         case "auth/email-already-in-use":
-          errorMessage = "Este correo ya está registrado. Por favor usa otro correo o inicia sesión.";
+          errorMessage = "Este email ya está registrado. Por favor usa otro email o inicia sesión.";
           break;
         case "auth/invalid-email":
-          errorMessage = "El correo electrónico no es válido";
+          errorMessage = "El email electrónico no es válido";
           break;
         case "auth/weak-password":
           errorMessage = "La contraseña es muy débil";
@@ -245,30 +245,30 @@ export default function Register() {
               )}
             </div>
 
-            {/* Correo */}
+            {/* email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Correo electrónico <span className="text-red-500">*</span>
+                email electrónico <span className="text-red-500">*</span>
               </label>
               <div className={`flex items-center border rounded-lg px-3 py-2.5 bg-gray-50 focus-within:ring-2 focus-within:border-transparent transition ${
-                errors.correo 
+                errors.email 
                   ? "border-red-500 focus-within:ring-red-500" 
                   : "border-gray-300 focus-within:ring-blue-500"
               }`}>
                 <Icon icon="mdi:email-outline" width="20" height="20" className="text-gray-400 mr-2" />
                 <input
-                  name="correo"
+                  name="email"
                   type="email"
                   className="bg-transparent outline-none flex-1 text-sm sm:text-base text-gray-900 placeholder-gray-400"
                   placeholder="tu@email.com"
-                  value={formData.correo}
+                  value={formData.email}
                   onChange={handleChange}
                 />
               </div>
-              {errors.correo && (
+              {errors.email && (
                 <p className="text-red-500 text-xs mt-1 flex items-center">
                   <Icon icon="mdi:alert-circle" className="w-4 h-4 mr-1" />
-                  {errors.correo}
+                  {errors.email}
                 </p>
               )}
             </div>
