@@ -12,7 +12,7 @@ import {
   signInWithEmailAndPassword,
   linkWithCredential,
 } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc ,setDoc, serverTimestamp } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -25,43 +25,62 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const registerLogin = async (user, provider) => {
-    try {
-      const sessionId = `${user.uid}_${Date.now()}`;
 
+const registerLogin = async (user, provider) => {
+  try {
+    const sessionId = `${user.uid}_${Date.now()}`;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    // 👉 Solo si NO existe, se crea con rol
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        email: user.email,
+        displayName: user.displayName || "Sin nombre",
+        photoURL: user.photoURL || null,
+        role: "usuario",
+        createdAt: serverTimestamp(),
+        providers: [provider],
+        isOnline: true,
+      });
+    } else {
+      // 👉 Si ya existe, solo se actualiza info de sesión
       await setDoc(
-        doc(db, "users", user.uid),
+        userRef,
         {
-          email: user.email,
-          displayName: user.displayName || "Sin nombre",
-          photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
-          role: "usuario",
           isOnline: true,
-          providers: user.providerData.map((p) => p.providerId),
           updatedAt: serverTimestamp(),
+          providers: Array.from(
+            new Set([
+              ...(userSnap.data().providers || []),
+              provider,
+            ])
+          ),
         },
         { merge: true }
       );
-
-      await setDoc(doc(db, "sessions", sessionId), {
-        userId: user.uid,
-        email: user.email,
-        displayName: user.displayName || "Sin nombre",
-        provider: provider,
-        loginTime: serverTimestamp(),
-        logoutTime: null,
-        duration: null,
-        isActive: true,
-        userAgent: navigator.userAgent,
-      });
-
-      localStorage.setItem("currentSessionId", sessionId);
-      console.log("✅ Sesión registrada correctamente");
-    } catch (error) {
-      console.error("❌ Error al registrar sesión:", error);
     }
-  };
+
+    // 🔐 Sesión
+    await setDoc(doc(db, "sessions", sessionId), {
+      userId: user.uid,
+      email: user.email,
+      displayName: user.displayName || "Sin nombre",
+      provider,
+      loginTime: serverTimestamp(),
+      logoutTime: null,
+      duration: null,
+      isActive: true,
+      userAgent: navigator.userAgent,
+    });
+
+    localStorage.setItem("currentSessionId", sessionId);
+  } catch (error) {
+    console.error("❌ Error al registrar sesión:", error);
+  }
+};
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
