@@ -56,15 +56,15 @@ export default function Register() {
         displayName: `${nombres} ${apellidos}`
       });
 
-      await setDoc(doc(db, "usuarios", user.uid), {
+      await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         nombres,
         apellidos,
         correo: emaillower,
         estado: "pendiente",
-        rol: "visitante",
         creado: new Date(),
         metodo: "contraseña",
+        role: "usuario",
       });
 
       Swal.fire("Registrado", "Usuario creado con éxito", "success");

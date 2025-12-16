@@ -1,42 +1,60 @@
 import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
 function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { user } = useAuth();
 
   const menuItems = [
     {
       path: "/dashboard",
       icon: "material-symbols:dashboard",
       label: "Panel Principal",
-      matchPath: "/dashboard"
+      matchPath: "/dashboard",
+      roles: ["admin", "usuario"]
     },
     {
       path: "/sesiones",
       icon: "mdi:account-clock",
       label: "sesiones",
-      matchPath: "/sesiones"
+      matchPath: "/sesiones",
+      roles: ["admin"]
     },
     {
       path: "/tramites",
       icon: "mdi:file-document-multiple",
       label: "Trámites",
-      matchPath: "/tramites"
+      matchPath: "/tramites",
+      roles: ["admin"]
     },
     {
       path: "/tipo-tramites",
       icon: "material-symbols:category",
       label: "Tipo de Trámites",
-      matchPath: "/tipo-tramites"
+      matchPath: "/tipo-tramites",
+      roles: ["admin"]
     },
     {
       path: "/funcionarios",
       icon: "mdi:account-tie",
       label: "Funcionarios",
-      matchPath: "/funcionarios"
+      matchPath: "/funcionarios",
+      roles: ["admin"]
+    },
+    {
+      path: "/misTramites",
+      icon: "mdi:file-document-multiple",
+      label: "Mis Trámites",
+      matchPath: "/tramites", 
+      roles: ["usuario"]
     }
   ];
+
+  const filteredMenuItems = menuItems.filter(item => 
+    item.roles.includes(user?.role)
+  );
 
   return (
     <>
@@ -74,7 +92,7 @@ function Sidebar({ isOpen, onClose }) {
 
         {/* Navegación */}
         <nav className="p-4 md:p-6 space-y-2">
-          {menuItems.map((item) => (
+          {filteredMenuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}

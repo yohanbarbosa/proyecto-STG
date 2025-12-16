@@ -36,6 +36,7 @@ export default function Login() {
           displayName: user.displayName || "Sin nombre",
           photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
+          role: "usuario",
           isOnline: true,
           providers: user.providerData.map((p) => p.providerId),
           updatedAt: serverTimestamp(),

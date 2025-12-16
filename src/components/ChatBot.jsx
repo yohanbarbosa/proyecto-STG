@@ -10,16 +10,16 @@ export default function ChatbotWidget() {
 
   return (
     <>
-      {/* Ventana del chatbot */}
+
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-[90vw] max-w-md h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden z-[9999] flex flex-col">
           <div className="flex justify-between items-center p-3  text-white">
 
             <button
               onClick={toggleChat}
-              className=" hover:bg-red-500 cursor-pointer  text-black  rounded-full p-1 transition w-8 h-8 flex items-center justify-center"
+              className=" hover:bg-red-500 cursor-pointer  text-black  border-[1px] border-gray-400 p-1 transition w-8 h-8 flex items-center justify-center"
             >
-              <Icon icon="mdi:close-thick" width="24" height="24"  />
+              <Icon icon="material-symbols:close" width="24" height="24"  />
             </button>
           </div>
 
@@ -32,10 +32,10 @@ export default function ChatbotWidget() {
         </div>
       )}
 
-      {/* Botón flotante */}
+¡
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl hover:shadow-green-600/50 transition-all hover:scale-110 z-[9999] focus:outline-none focus:ring-4 focus:ring-blue-300"
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl hover:shadow-blue-600/50 transition-all hover:scale-110 z-[9999] focus:outline-none focus:ring-4 focus:ring-blue-300"
         aria-label="Abrir chat"
       >
         <Icon icon="carbon:chat-bot" width="32" height="32" />

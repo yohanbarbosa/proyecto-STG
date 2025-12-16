@@ -6,6 +6,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import AppLayout from "../../components/AppLayout";
 import { db } from "../../firebase";
@@ -25,8 +27,33 @@ function TipoTramites() {
   // Formulario
   const [formData, setFormData] = useState({
     nombre: "",
+    rol: "",
+    duracionDias: 0,
     estado: true,
   });
+
+  // Función para formatear timestamp a fecha legible
+  const formatearFecha = (timestamp) => {
+    if (!timestamp) return "Sin fecha";
+
+    // Si es un Timestamp de Firestore
+    if (timestamp instanceof Timestamp) {
+      const fecha = timestamp.toDate();
+      return `${fecha.getDate()}/${
+        fecha.getMonth() + 1
+      }/${fecha.getFullYear()}`;
+    }
+
+    // Si es un objeto con seconds (por si acaso)
+    if (timestamp.seconds) {
+      const fecha = new Date(timestamp.seconds * 1000);
+      return `${fecha.getDate()}/${
+        fecha.getMonth() + 1
+      }/${fecha.getFullYear()}`;
+    }
+
+    return "Sin fecha";
+  };
 
   // Traer los datos de tipo-tramites
   useEffect(() => {
@@ -53,15 +80,10 @@ function TipoTramites() {
     setLoading(true);
 
     try {
-      const ahora = new Date();
-      const fechaFormateada = `${ahora.getDate()}/${
-        ahora.getMonth() + 1
-      }/${ahora.getFullYear()}`;
-
       const nuevoTipoTramite = {
         ...formData,
-        fechaCreacion: fechaFormateada,
-        ultimaActualizacion: fechaFormateada,
+        fechaCreacion: serverTimestamp(),
+        ultimaActualizacion: serverTimestamp(),
       };
       const docRef = await addDoc(
         collection(db, "tipo-tramites"),
@@ -83,15 +105,10 @@ function TipoTramites() {
     setLoading(true);
 
     try {
-      const ahora = new Date();
-      const fechaFormateada = `${ahora.getDate()}/${
-        ahora.getMonth() + 1
-      }/${ahora.getFullYear()}`;
-
       const tipoTramiteRef = doc(db, "tipo-tramites", selectedTipoTramite.id);
       const dataToUpdate = {
         ...formData,
-        ultimaActualizacion: fechaFormateada,
+        ultimaActualizacion: serverTimestamp(),
       };
       await updateDoc(tipoTramiteRef, dataToUpdate);
       cerrarModal();
@@ -129,6 +146,8 @@ function TipoTramites() {
     setSelectedTipoTramite(tipoTramite);
     setFormData({
       nombre: tipoTramite.nombre,
+      rol:tipoTramite.rol,
+      duracionDias: tipoTramite.duracionDias,
       estado: tipoTramite.estado,
     });
     setShowModal(true);
@@ -170,7 +189,7 @@ function TipoTramites() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-              Tipos de Trámites
+              Tipos de Estados Trámites
             </h1>
             <p className="text-sm text-gray-600 mt-1">
               Gestiona los tipos de trámites disponibles
@@ -216,8 +235,8 @@ function TipoTramites() {
         </div>
         {/* Contador */}
         <div className="text-xs sm:text-sm text-gray-600">
-          Mostrando {filteredTipoTramites.length} de {tipoTramites.length}{" "}
-          tipos de trámites
+          Mostrando {filteredTipoTramites.length} de {tipoTramites.length} tipos
+          de trámites
           {search && ` (filtrado)`}
         </div>
 
@@ -231,6 +250,12 @@ function TipoTramites() {
                     <tr>
                       <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nombre del Trámite
+                      </th>
+                       <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Rol
+                      </th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Duracion
                       </th>
                       <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Estado
@@ -278,6 +303,36 @@ function TipoTramites() {
                               </div>
                             </div>
                           </td>
+                          <td className="px-4 lg:px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <Icon
+                                  icon="mdi:security-account"
+                                  className="w-5 h-5 text-purple-600"
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {tipoTramite.rol}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 lg:px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <Icon
+                                  icon="mdi:clock-time-nine-outline"
+                                  className="w-5 h-5 text-purple-600"
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {tipoTramite.duracionDias} dias
+                                </div>
+                              </div>
+                            </div>
+                          </td>
                           <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                             <span
                               className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -300,10 +355,10 @@ function TipoTramites() {
                             </span>
                           </td>
                           <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                            {tipoTramite.fechaCreacion || "Sin fecha"}
+                            {formatearFecha(tipoTramite.fechaCreacion)}
                           </td>
                           <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">
-                            {tipoTramite.ultimaActualizacion || "Sin fecha"}
+                            {formatearFecha(tipoTramite.ultimaActualizacion)}
                           </td>
                           <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end space-x-2">
@@ -339,7 +394,7 @@ function TipoTramites() {
 
             {/* Vista Mobile - Cards */}
             <div className="md:hidden space-y-4">
-              {tipoTramites.length === 0 ? (
+              {filteredTipoTramites.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
                   <Icon
                     icon="mdi:file-document-multiple-outline"
@@ -350,7 +405,7 @@ function TipoTramites() {
                   </p>
                 </div>
               ) : (
-                tipoTramites.map((tipoTramite) => (
+                filteredTipoTramites.map((tipoTramite) => (
                   <div
                     key={tipoTramite.id}
                     className="bg-white rounded-lg shadow-sm border p-4 space-y-3"
@@ -396,7 +451,7 @@ function TipoTramites() {
                       <div>
                         <p className="text-xs text-gray-500 mb-0.5">Creación</p>
                         <p className="text-xs font-medium text-gray-900">
-                          {tipoTramite.fechaCreacion || "Sin fecha"}
+                          {formatearFecha(tipoTramite.fechaCreacion)}
                         </p>
                       </div>
                       <div>
@@ -404,7 +459,7 @@ function TipoTramites() {
                           Actualización
                         </p>
                         <p className="text-xs font-medium text-gray-900">
-                          {tipoTramite.ultimaActualizacion || "Sin fecha"}
+                          {formatearFecha(tipoTramite.ultimaActualizacion)}
                         </p>
                       </div>
                     </div>
@@ -461,19 +516,49 @@ function TipoTramites() {
                 >
                   <div className="space-y-4">
                     {/* Nombre */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Nombre del Trámite *
-                      </label>
-                      <input
-                        type="text"
-                        name="nombre"
-                        value={formData.nombre}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                        placeholder="Ej: Licencia de construcción"
-                      />
+                    <div className="space-y-1">
+                      <div className="">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Nombre del Trámite *
+                        </label>
+                        <input
+                          type="text"
+                          name="nombre"
+                          value={formData.nombre}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          placeholder="Ej: Radicado"
+                        />
+                      </div>
+                      <div className="">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Nombre del Rol *
+                        </label>
+                        <input
+                          type="text"
+                          name="rol"
+                          value={formData.rol}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          placeholder="Ej: Funcionario"
+                        />
+                      </div>
+                      <div className="">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          Tiempo estimado *
+                        </label>
+                        <input
+                          type="number"
+                          name="duracion"
+                          value={formData.duracionDias}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          placeholder="Ej: 2"
+                        />
+                      </div>
                     </div>
 
                     {/* Estado */}
