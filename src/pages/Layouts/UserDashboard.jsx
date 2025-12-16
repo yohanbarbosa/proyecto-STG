@@ -28,8 +28,8 @@ const useTramites = () => {
           return {
             id: doc.id,
             ...d,
-            fechaCreado: d.fechaCreado?.toDate(),
-            fechaActualizado: d.fechaActualizado?.toDate(),
+            fechaCreado: d.fechaCreado?.toDate() ,
+            fechaActualizado: d.fechaActualizado?.toDate() ,
           };
         });
 
@@ -46,6 +46,18 @@ const useTramites = () => {
 
   return { tramites, loading };
 };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "N/A";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
 const UserDashboard = () => {
   const { user } = useAuth();
@@ -315,7 +327,7 @@ const UserDashboard = () => {
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
                           Creado:{" "}
-                          {tramite.fechaCreado?.toLocaleDateString() ||
+                          {formatDate(tramite.fechaCreado) ||
                             "Sin fecha"}
                         </p>
                       </div>
@@ -410,21 +422,19 @@ const UserDashboard = () => {
                       <div>
                         <p className="text-xs text-gray-500">Creación</p>
                         <p className="text-xs sm:text-sm font-medium text-gray-900 break-words">
-                          {tramite.fechaCreado?.toLocaleDateString() ||
-                            "Sin fecha"}
+                         {formatDate(tramite.fechaCreado)}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Actualización</p>
                         <p className="text-xs sm:text-sm font-medium text-gray-900 break-words">
-                          {tramite.fechaActualizado?.toLocaleDateString() ||
-                            "Sin fecha"}
+                          {formatDate(tramite.fechaActualizado)}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Fecha Límite</p>
                         <p className="text-xs sm:text-sm font-medium text-gray-900 break-words">
-                          {tramite.fechaLimite || "Sin definir"}
+                          {formatDate(tramite.fechaLimite) || "Sin definir"}
                         </p>
                       </div>
                       <div>
@@ -468,7 +478,7 @@ const UserDashboard = () => {
                             </p>
                           </div>
                           <span className="text-xs text-gray-500 flex-shrink-0">
-                            {tramite.fechaCreado?.toLocaleDateString() || "N/A"}
+                            {formatDate(tramite.fechaCreado) }
                           </span>
                         </div>
 
@@ -520,8 +530,7 @@ const UserDashboard = () => {
                           </div>
                           {tramite.etapaActual >= 2 && (
                             <span className="text-xs text-gray-500 flex-shrink-0">
-                              {tramite.fechaActualizado?.toLocaleDateString() ||
-                                "N/A"}
+                              {formatDate(tramite.fechaActualizado)}
                             </span>
                           )}
                         </div>
