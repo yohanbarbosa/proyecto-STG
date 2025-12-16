@@ -116,8 +116,7 @@ export default function Register() {
 
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
-        nombres: nombres.trim(),
-        apellidos: apellidos.trim(),
+        displayName: `${nombres.trim()} ${apellidos.trim()}`,
         email: emaillower,
         estado: "pendiente",
         creado: new Date(),
